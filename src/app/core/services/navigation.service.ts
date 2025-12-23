@@ -12,6 +12,24 @@ export interface FileEntry {
   providedIn: 'root',
 })
 export class NavigationService {
+  isSidebarVisible = signal(typeof window !== 'undefined' ? window.innerWidth > 768 : true);
+  viewMode = signal<'code' | 'preview'>('preview');
+  scrollToRequest = signal<string | null>(null);
+
+  toggleSidebar() {
+    this.isSidebarVisible.update((v: boolean) => !v);
+  }
+
+  // Request a scroll to a specific section
+  requestScroll(sectionId: string) {
+    this.scrollToRequest.set(sectionId);
+    this.isSidebarVisible.set(false); // Close sidebar on request
+  }
+
+  toggleViewMode() {
+    this.viewMode.update((v) => (v === 'code' ? 'preview' : 'code'));
+  }
+
   private allFiles = signal<FileEntry[]>([
     // About Module
     {
@@ -60,17 +78,26 @@ export class NavigationService {
     this.allFiles().find((f) => f.name === this.activeFilePath())
   );
 
-  openFile(fileName: string) {
+  openFile(fileName: string, switchView = false) {
     const targetFile = this.allFiles().find((f) => f.name === fileName);
     if (!targetFile || targetFile.folder === 'root') return;
 
     this.allFiles.update((files) =>
-      files.map((f) => ({
-        ...f,
-        isOpen: f.name === fileName,
-      }))
+      files.map((f) => {
+        if (window.innerWidth <= 768) {
+          // On mobile, only allow ONE file to be open at a time to prevent accumulation
+          return { ...f, isOpen: f.name === fileName };
+        }
+        return { ...f, isOpen: f.name === fileName ? true : f.isOpen };
+      })
     );
     this.activeFilePath.set(fileName);
+
+    // Only switch to code view if explicitly requested
+    if (switchView && window.innerWidth <= 768) {
+      this.viewMode.set('code');
+      this.isSidebarVisible.set(false);
+    }
   }
 
   closeFile(fileName: string) {

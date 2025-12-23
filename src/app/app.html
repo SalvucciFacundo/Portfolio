@@ -1,20 +1,30 @@
-<div class="ide-container" [class.light-theme]="!theme.isDark()">
+<div
+  class="ide-container"
+  [class.light-theme]="!theme.isDark()"
+  [class.sidebar-hidden]="!nav.isSidebarVisible()"
+  [class.preview-focused]="nav.viewMode() === 'preview'"
+>
   <!-- Title Bar -->
   <header class="title-bar">
     <div class="menu-items">
+      <div class="mobile-menu-toggle" (click)="nav.toggleSidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18" />
+        </svg>
+      </div>
       <img
         src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg"
         alt="logo"
         class="vscode-logo"
       />
-      <span>File</span>
-      <span>Edit</span>
-      <span>Selection</span>
-      <span>View</span>
-      <span>Go</span>
-      <span>Run</span>
-      <span>Terminal</span>
-      <span>Help</span>
+      <span class="desktop-only">File</span>
+      <span class="desktop-only">Edit</span>
+      <span class="desktop-only">Selection</span>
+      <span class="desktop-only">View</span>
+      <span class="desktop-only">Go</span>
+      <span class="desktop-only">Run</span>
+      <span class="desktop-only">Terminal</span>
+      <span class="desktop-only">Help</span>
     </div>
     <div class="app-title">{{ nav.activeFile()?.name || 'Portfolio' }} - Visual Studio Code</div>
     <div class="window-controls">
@@ -112,7 +122,7 @@
           </main>
         </section>
 
-        <section class="terminal">
+        <section class="terminal desktop-only">
           <div class="terminal-tabs">
             <div class="terminal-tab active">TERMINAL</div>
             <div class="terminal-tab">OUTPUT</div>
@@ -137,7 +147,11 @@
       <section class="preview-shell">
         <!-- VS Code-like Tab Header for Preview -->
         <header class="preview-tabs-bar">
-          <div class="tab active">
+          <div
+            class="tab"
+            [class.active]="nav.viewMode() === 'preview'"
+            (click)="nav.viewMode.set('preview')"
+          >
             <svg
               class="preview-icon"
               viewBox="0 0 24 24"
@@ -153,6 +167,15 @@
               <line x1="20" y1="12" x2="22" y2="12" />
             </svg>
             <span>Live Preview</span>
+          </div>
+
+          <div
+            class="tab mobile-only"
+            [class.active]="nav.viewMode() === 'code'"
+            (click)="nav.viewMode.set('code')"
+          >
+            <span class="file-icon-placeholder">{{ '{' }}{{ '}' }}</span>
+            <span>{{ nav.activeFile()?.name || 'Code' }}</span>
           </div>
         </header>
 
@@ -245,13 +268,11 @@
                 </div>
               </nav>
             </header>
-            <main class="browser-body">
-              @switch (nav.activeFile()?.path) { @case ('about') {
-              <app-about-preview></app-about-preview> } @case ('skills') {
-              <app-skills-preview></app-skills-preview> } @case ('projects') {
-              <app-projects-preview></app-projects-preview> } @case ('contact') {
-              <app-contact-preview></app-contact-preview> } @default {
-              <app-about-preview></app-about-preview> } }
+            <main class="browser-body" #previewScroll (scroll)="onPreviewScroll($event)">
+              <div id="about-section"><app-about-preview></app-about-preview></div>
+              <div id="skills-section"><app-skills-preview></app-skills-preview></div>
+              <div id="projects-section"><app-projects-preview></app-projects-preview></div>
+              <div id="contact-section"><app-contact-preview></app-contact-preview></div>
             </main>
           </div>
         </div>

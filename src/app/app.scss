@@ -116,8 +116,30 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      &:hover { background: rgba(255, 255, 255, 0.1); }
-      svg { width: 14px; height: 14px; color: currentColor; }
+      position: relative;
+      background: rgba(0, 122, 204, 0.1); /* Subtle accent background to show it's active */
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 4px;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background-color: var(--accent-color); /* Small "functional" dot indicator */
+      }
+      
+      &:hover { 
+        background: rgba(0, 122, 204, 0.3);
+        svg { transform: scale(1.15); }
+      }
+      
+      svg { 
+        width: 14px; 
+        height: 14px; 
+        color: #ffca28; /* Gold for the sun/moon to make it pop */
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
     }
 
     .control-btn {
@@ -140,8 +162,9 @@
 .ide-container.light-theme {
   .title-bar {
     .window-controls {
-      .control-btn, .theme-toggle svg { color: #333; }
-      .control-btn:hover, .theme-toggle:hover { background: rgba(0,0,0,0.05); }
+      .control-btn { color: #333; }
+      .control-btn:hover { background: rgba(0,0,0,0.05); }
+      .theme-toggle:hover { background: rgba(0, 122, 204, 0.2); }
       .close:hover { background: #e81123; color: white; }
     }
   }
@@ -244,11 +267,17 @@
       display: flex;
       align-items: center;
       padding: 0 15px;
-      background-color: var(--bg-tab-active);
-      color: var(--fg-active);
+      background-color: var(--bg-tab-inactive);
+      color: var(--fg-sidebar);
       font-size: 13px;
-      border-top: 1px solid var(--accent-color);
       gap: 8px;
+      cursor: pointer;
+
+      &.active { 
+        background-color: var(--bg-tab-active);
+        color: var(--fg-active);
+        border-top: 1px solid var(--accent-color); 
+      }
 
       svg {
         width: 14px;
@@ -583,3 +612,151 @@
     }
   }
 }
+
+/* Responsive Layout & Sidebar Toggle */
+.sidebar-hidden app-sidebar {
+  display: none;
+}
+
+.mobile-menu-toggle {
+  display: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  &:hover { background: rgba(255,255,255,0.1); }
+  svg { width: 18px; height: 18px; color: #fff; }
+}
+
+@media (max-width: 1024px) {
+  .editor-and-preview {
+    flex-direction: column !important;
+    .editor, .preview-shell {
+      width: 100% !important;
+      height: 50% !important;
+    }
+    .preview-shell {
+      border-left: none !important;
+      border-top: 1px solid var(--border-color);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .desktop-only { display: none !important; }
+  .mobile-only { display: flex !important; }
+  
+  .workspace-area {
+    flex-direction: column !important;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* PERSISTENT HEADER Logic */
+  .preview-shell {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 5;
+    background-color: var(--bg-editor);
+    transition: transform 0.3s ease;
+
+    /* If we are in code mode, we slide the preview body but KEEP the header? 
+       Actually, user wants tabs to stay. Let's make the shell header persistent. */
+    
+    .preview-tabs-bar {
+      height: 40px !important;
+      display: flex !important;
+      background-color: var(--bg-tabs) !important;
+      z-index: 20;
+      
+      .tab {
+        flex: 1;
+        justify-content: center;
+        border-right: 1px solid var(--border-color);
+        background-color: var(--bg-tab-inactive);
+        &.active { 
+          background-color: var(--bg-tab-active);
+          border-top: 2px solid var(--accent-color); 
+        }
+      }
+    }
+
+    .preview-workspace {
+      flex: 1;
+      display: flex;
+      overflow: hidden; /* Desktop overflow hidden */
+    }
+
+    /* THE SWITCH: In Code mode, we hide the PREVIEW CONTENT but keep the shell visible for the TABS */
+    .ide-container:not(.preview-focused) & .preview-workspace {
+      display: none !important;
+    }
+  }
+
+  .code-zone {
+    position: absolute;
+    top: 40px; /* Below the persistent tabs */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background-color: var(--bg-editor);
+    border: none !important;
+    
+    /* Only show when NOT in preview mode */
+    .ide-container.preview-focused & {
+      display: none !important;
+    }
+
+    .editor-shell { height: 100%; }
+    .editor-content { padding: 10px; }
+  }
+
+  .mobile-menu-toggle { display: flex; }
+  
+  .app-title {
+    font-size: 9px;
+    max-width: 150px;
+  }
+
+  .window-controls {
+    .control-btn:not(.close), .theme-toggle {
+       display: none !important; 
+    }
+  }
+
+  app-sidebar {
+    position: absolute;
+    left: 48px;
+    top: 0;
+    bottom: 0;
+    z-index: 1000;
+    box-shadow: 10px 0 20px rgba(0,0,0,0.5);
+    width: 260px;
+  }
+
+  .file-icon-placeholder {
+    margin-right: 6px;
+    color: #e37933;
+    font-weight: bold;
+    font-size: 10px;
+  }
+
+  /* Make browser frame scrollable and fill space */
+  .browser-body {
+    padding: 10px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    overflow-y: auto !important; /* Force scroll */
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    height: 100% !important;
+  }
+
+  .terminal, .breadcrumb, .tabs-bar, .chrome-header {
+    display: none !important; 
+  }
+}
+

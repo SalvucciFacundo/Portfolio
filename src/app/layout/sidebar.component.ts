@@ -327,7 +327,21 @@ export class SidebarComponent {
 
   selectFile(file: FileEntry) {
     if (file.folder === 'root') return;
-    this.nav.openFile(file.name);
+
+    // On mobile, if in preview mode, we scroll to the section instead of switching to code
+    if (window.innerWidth <= 768 && this.nav.viewMode() === 'preview' && file.path) {
+      this.nav.requestScroll(file.path);
+      this.nav.openFile(file.name); // Still update active file state
+      return;
+    }
+
+    this.nav.openFile(file.name, true); // true = explicit intent to see code
+
+    // Auto-close sidebar on mobile
+    if (window.innerWidth <= 768) {
+      this.nav.isSidebarVisible.set(false);
+    }
+
     if (file.path) {
       this.router.navigate([file.path]);
     }

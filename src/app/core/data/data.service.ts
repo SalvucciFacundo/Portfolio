@@ -19,14 +19,14 @@ export class DataService {
 
   // Generic method to get all documents from a collection
   getCollection<T>(path: string): Observable<T[]> {
-    const colItem = collection(this.firestore, path);
-    return collectionData(colItem, { idField: 'id' }) as Observable<T[]>;
+    const colRef = collection(this.firestore, path);
+    return collectionData(colRef as any, { idField: 'id' } as any) as Observable<T[]>;
   }
 
   // Generic method to get a single document
   getDoc<T>(path: string, id: string): Observable<T> {
     const docItem = doc(this.firestore, `${path}/${id}`);
-    return docData(docItem, { idField: 'id' }) as Observable<T>;
+    return docData(docItem, { idField: 'id' } as any) as Observable<T>;
   }
 
   // Generic method to update a document
