@@ -23,7 +23,6 @@ export class AuthService {
   async login(email: string, pass: string) {
     try {
       await signInWithEmailAndPassword(this.auth, email, pass);
-      this.router.navigate(['/admin']);
       return { success: true };
     } catch (error: any) {
       console.error('Login error:', error.code);

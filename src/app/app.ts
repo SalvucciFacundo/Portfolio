@@ -17,6 +17,9 @@ import { SkillsPreviewComponent } from './features/skills/skills-preview.compone
 import { ProjectsPreviewComponent } from './features/projects/projects-preview.component';
 import { ContactPreviewComponent } from './features/contact/contact-preview.component';
 import { CommonModule } from '@angular/common';
+import { ModalService } from './core/services/modal.service';
+import { ModalContainerComponent } from './layout/modal-container.component';
+import { AuthService } from './core/auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -29,6 +32,7 @@ import { CommonModule } from '@angular/common';
     ProjectsPreviewComponent,
     ContactPreviewComponent,
     CommonModule,
+    ModalContainerComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -38,6 +42,8 @@ export class App {
   protected readonly nav = inject(NavigationService);
   protected readonly terminal = inject(TerminalService);
   protected readonly theme = inject(ThemeService);
+  protected readonly modal = inject(ModalService);
+  protected readonly auth = inject(AuthService);
   private router = inject(Router);
   private terminalScroll = viewChild<ElementRef>('terminalScroll');
   private previewScroll = viewChild<ElementRef>('previewScroll');
@@ -63,10 +69,6 @@ export class App {
         setTimeout(() => (el.scrollTop = el.scrollHeight), 0);
       }
     });
-  }
-
-  goToLogin() {
-    this.router.navigate(['/login']);
   }
 
   onPreviewScroll(event: Event) {

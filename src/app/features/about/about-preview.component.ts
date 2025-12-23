@@ -1,20 +1,31 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { TerminalService } from '../../core/services/terminal.service';
+import { PortfolioStateService } from '../../core/services/portfolio-state.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-about-preview',
+  imports: [CommonModule],
   template: `
+    @if (state.profile(); as p) {
     <div class="profile-card">
-      <div class="avatar">FS</div>
-      <h2>Facundo Salvucci</h2>
-      <p class="role">Full Stack Developer</p>
-      <div class="bio">"Construyendo el futuro una línea de código a la vez."</div>
+      <div class="avatar">{{ p.name.substring(0, 2).toUpperCase() }}</div>
+      <h2>{{ p.name }}</h2>
+      <p class="role">{{ p.role }}</p>
+      <div class="bio">"{{ p.motto }}"</div>
       <div class="socials">
         <button (click)="log($event, 'Angular')">Angular</button>
         <button (click)="log($event, 'TypeScript')">TypeScript</button>
         <button (click)="log($event, 'Firebase')">Firebase</button>
       </div>
     </div>
+    } @else {
+    <div class="profile-card skeleton">
+      <div class="avatar gray"></div>
+      <div class="line gray title"></div>
+      <div class="line gray sub"></div>
+    </div>
+    }
   `,
   styles: [
     `
@@ -84,18 +95,48 @@ import { TerminalService } from '../../core/services/terminal.service';
           transform: translateY(-2px);
         }
       }
+
+      /* Skeleton logic */
+      .gray {
+        background: #333 !important;
+      }
+      .line {
+        height: 15px;
+        margin: 10px auto;
+        border-radius: 4px;
+      }
+      .line.title {
+        width: 60%;
+      }
+      .line.sub {
+        width: 40%;
+      }
+      .skeleton {
+        animation: pulse 1.5s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          opacity: 0.6;
+        }
+        50% {
+          opacity: 0.3;
+        }
+        100% {
+          opacity: 0.6;
+        }
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
 export class AboutPreviewComponent {
+  protected state = inject(PortfolioStateService);
   private terminal = inject(TerminalService);
 
   log(event: MouseEvent, skill: string) {
     event.preventDefault();
     event.stopPropagation();
-    console.log('Logging skill:', skill); // For browser console
     this.terminal.log(`> Analizando expertise en: ${skill.toUpperCase()}...`, 'info');
     this.terminal.log(`> Resultado: Perfil de desarrollador senior detectado.`, 'success');
   }

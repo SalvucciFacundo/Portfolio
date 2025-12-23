@@ -90,12 +90,21 @@
         </div>
       </div>
       <div class="action-bottom">
-        <div class="action-item" (click)="goToLogin()">
+        <div class="action-item" (click)="modal.open('login')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
             <circle cx="12" cy="7" r="4" />
           </svg>
         </div>
+        @if (auth.currentUser()) {
+        <div class="action-item" (click)="auth.logout()" title="Logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </div>
+        }
         <div class="action-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="3" />
@@ -273,10 +282,33 @@
               </nav>
             </header>
             <main class="browser-body" #previewScroll (scroll)="onPreviewScroll($event)">
-              <div id="about-section"><app-about-preview></app-about-preview></div>
-              <div id="skills-section"><app-skills-preview></app-skills-preview></div>
-              <div id="projects-section"><app-projects-preview></app-projects-preview></div>
-              <div id="contact-section"><app-contact-preview></app-contact-preview></div>
+              <div id="about-section" class="preview-section">
+                @if (auth.currentUser()) {
+                <button class="edit-overlay-btn" (click)="modal.open('edit-profile')">
+                  Edit Profile
+                </button>
+                }
+                <app-about-preview></app-about-preview>
+              </div>
+              <div id="skills-section" class="preview-section">
+                @if (auth.currentUser()) {
+                <button class="edit-overlay-btn" (click)="modal.open('edit-skills')">
+                  Edit Skills
+                </button>
+                }
+                <app-skills-preview></app-skills-preview>
+              </div>
+              <div id="projects-section" class="preview-section">
+                @if (auth.currentUser()) {
+                <button class="edit-overlay-btn" (click)="modal.open('edit-projects')">
+                  Edit Projects
+                </button>
+                }
+                <app-projects-preview></app-projects-preview>
+              </div>
+              <div id="contact-section" class="preview-section">
+                <app-contact-preview></app-contact-preview>
+              </div>
             </main>
           </div>
         </div>
@@ -316,4 +348,6 @@
       <div class="status-item">{{ nav.activeFile()?.type?.toUpperCase() || 'TEXT' }}</div>
     </div>
   </footer>
+
+  <app-modal-container></app-modal-container>
 </div>

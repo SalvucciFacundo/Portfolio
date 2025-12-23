@@ -1,21 +1,30 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { TerminalService } from '../../core/services/terminal.service';
+import { PortfolioStateService } from '../../core/services/portfolio-state.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-skills-preview',
+  imports: [CommonModule],
   template: `
     <div class="skills-preview">
+      @for (group of state.skills(); track group.category) {
       <div class="category">
-        <h4>Frontend Development</h4>
-        <div class="skill-item" (click)="log($event, 'Angular', '95%')">
-          <span>Angular</span>
-          <div class="skill-bar"><div class="fill" style="width: 95%"></div></div>
+        <h4>{{ group.category }}</h4>
+        @for (item of group.items; track item) {
+        <div class="skill-item" (click)="log($event, item)">
+          <span>{{ item }}</span>
+          <div class="skill-bar"><div class="fill" style="width: 85%"></div></div>
         </div>
-        <div class="skill-item" (click)="log($event, 'TypeScript', '90%')">
-          <span>TypeScript</span>
-          <div class="skill-bar"><div class="fill" style="width: 90%"></div></div>
-        </div>
+        }
       </div>
+      } @empty {
+      <div class="category skeleton">
+        <div class="line gray title"></div>
+        <div class="skill-item"><div class="skill-bar gray"></div></div>
+        <div class="skill-item"><div class="skill-bar gray"></div></div>
+      </div>
+      }
     </div>
   `,
   styles: [
@@ -61,16 +70,41 @@ import { TerminalService } from '../../core/services/terminal.service';
         background: linear-gradient(90deg, #61afef, #c678dd);
         border-radius: 4px;
       }
+
+      .gray {
+        background: #333 !important;
+      }
+      .line.title {
+        width: 50%;
+        height: 15px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+      }
+      .skeleton {
+        animation: pulse 1.5s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          opacity: 0.6;
+        }
+        50% {
+          opacity: 0.3;
+        }
+        100% {
+          opacity: 0.6;
+        }
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
 export class SkillsPreviewComponent {
+  protected state = inject(PortfolioStateService);
   private terminal = inject(TerminalService);
 
-  log(event: MouseEvent, name: string, level: string) {
+  log(event: MouseEvent, name: string) {
     event.stopPropagation();
-    this.terminal.log(`> Skill Report [${name}]: Current proficiency at ${level}`, 'success');
+    this.terminal.log(`> Skill Report [${name}]: Expertise verified.`, 'success');
   }
 }
