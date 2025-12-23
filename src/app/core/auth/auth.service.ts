@@ -11,18 +11,21 @@ export class AuthService {
   private router = inject(Router);
 
   // Signal for the current user
-  currentUser = signal(this.auth.currentUser);
+  currentUser = signal<any>(null);
 
   constructor() {
     // Keep the signal in sync with Firebase Auth state
-    user(this.auth).subscribe((usr) => {
-      this.currentUser.set(usr);
-    });
+    if (typeof window !== 'undefined') {
+      user(this.auth).subscribe((usr) => {
+        this.currentUser.set(usr);
+      });
+    }
   }
 
   async login(email: string, pass: string) {
     try {
-      await signInWithEmailAndPassword(this.auth, email, pass);
+      const res = await signInWithEmailAndPassword(this.auth, email, pass);
+      this.currentUser.set(res.user);
       return { success: true };
     } catch (error: any) {
       console.error('Login error:', error.code);

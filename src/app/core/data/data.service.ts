@@ -2,9 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import {
   Firestore,
   collection,
-  collectionData,
   doc,
-  docData,
   setDoc,
   updateDoc,
   deleteDoc,
@@ -12,6 +10,9 @@ import {
   orderBy,
   limit,
   startAfter,
+  getDocs,
+  onSnapshot,
+  DocumentSnapshot,
   QueryDocumentSnapshot,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
@@ -23,16 +24,37 @@ import { Project } from '../models/portfolio.model';
 export class DataService {
   private firestore = inject(Firestore);
 
-  // Generic method to get all documents from a collection
+  // Generic method to get all documents from a collection as real-time stream
   getCollection<T>(path: string): Observable<T[]> {
-    const colRef = collection(this.firestore, path);
-    return collectionData(colRef as any, { idField: 'id' } as any) as Observable<T[]>;
+    return new Observable<T[]>((subscriber) => {
+      const colRef = collection(this.firestore, path);
+      return onSnapshot(
+        colRef,
+        (snapshot) => {
+          const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as T));
+          subscriber.next(items);
+        },
+        (error) => subscriber.error(error)
+      );
+    });
   }
 
-  // Generic method to get a single document
+  // Generic method to get a single document as real-time stream
   getDoc<T>(path: string, id: string): Observable<T> {
-    const docItem = doc(this.firestore, `${path}/${id}`);
-    return docData(docItem, { idField: 'id' } as any) as Observable<T>;
+    return new Observable<T>((subscriber) => {
+      const docItem = doc(this.firestore, `${path}/${id}`);
+      return onSnapshot(
+        docItem,
+        (snapshot) => {
+          if (snapshot.exists()) {
+            subscriber.next({ id: snapshot.id, ...snapshot.data() } as T);
+          } else {
+            subscriber.next(undefined as any);
+          }
+        },
+        (error) => subscriber.error(error)
+      );
+    });
   }
 
   // Generic method to update a document
@@ -44,19 +66,30 @@ export class DataService {
   // Create or override a document
   save(path: string, id: string, data: any) {
     const docItem = doc(this.firestore, `${path}/${id}`);
-    return setDoc(docItem, data);
+    // Ensure we don't save the 'id' field inside the document data
+    const { id: _, ...cleanData } = data;
+    return setDoc(docItem, cleanData);
   }
 
   // Paginated projects
   getProjectsPaginated(
     pageSize: number,
     lastDoc?: QueryDocumentSnapshot<Project>
-  ): Observable<Project[]> {
-    const colRef = collection(this.firestore, 'projects');
-    const q = lastDoc
-      ? query(colRef, orderBy('order'), startAfter(lastDoc), limit(pageSize))
-      : query(colRef, orderBy('order'), limit(pageSize));
+  ): Observable<{ data: Project[]; lastDoc: QueryDocumentSnapshot<Project> | null }> {
+    return new Observable((subscriber) => {
+      const colRef = collection(this.firestore, 'projects');
+      const constraints: any[] = [orderBy('order'), limit(pageSize)];
+      if (lastDoc) constraints.push(startAfter(lastDoc));
 
-    return collectionData(q as any, { idField: 'id' }) as Observable<Project[]>;
+      const q = query(colRef, ...constraints);
+      getDocs(q)
+        .then((snapshot) => {
+          const data = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Project));
+          const lastVisible = snapshot.docs[snapshot.docs.length - 1] || null;
+          subscriber.next({ data, lastDoc: lastVisible as any });
+          subscriber.complete();
+        })
+        .catch((err) => subscriber.error(err));
+    });
   }
 }

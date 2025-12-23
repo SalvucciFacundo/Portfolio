@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalService } from '../core/services/modal.service';
@@ -7,6 +7,7 @@ import { TerminalService } from '../core/services/terminal.service';
 import { DataService } from '../core/data/data.service';
 import { AuthService } from '../core/auth/auth.service';
 import { ModalComponent } from '../shared/components/modal.component';
+import { Profile } from '../core/models/portfolio.model';
 
 @Component({
   selector: 'app-modal-container',
@@ -29,15 +30,56 @@ import { ModalComponent } from '../shared/components/modal.component';
       <!-- Edit Profile -->
       @if (type === 'edit-profile') {
       <div class="form-group">
-        @if (state.profile(); as p) {
+        @let p = state.profile();
         <label>Name</label>
-        <input [(ngModel)]="p.name" />
+        <input [(ngModel)]="profileBuffer().name" placeholder="Tu Nombre" />
+
         <label>Role</label>
-        <input [(ngModel)]="p.role" />
+        <input [(ngModel)]="profileBuffer().role" placeholder="Tu Rol" />
+
         <label>Motto</label>
-        <input [(ngModel)]="p.motto" />
-        <button class="primary-btn" (click)="saveProfile(p)">Update Profile</button>
-        }
+        <input [(ngModel)]="profileBuffer().motto" placeholder="Tu Lema" />
+
+        <label>Location</label>
+        <input [(ngModel)]="profileBuffer().location" placeholder="Ciudad, País" />
+
+        <label>Bio</label>
+        <textarea
+          [(ngModel)]="profileBuffer().bio"
+          placeholder="Breve biografía profesional"
+        ></textarea>
+
+        <div class="socials-grid">
+          <div>
+            <label>GitHub</label>
+            <input
+              [(ngModel)]="profileBuffer().socials.github"
+              placeholder="https://github.com/..."
+            />
+          </div>
+          <div>
+            <label>LinkedIn</label>
+            <input
+              [(ngModel)]="profileBuffer().socials.linkedin"
+              placeholder="https://linkedin.com/in/..."
+            />
+          </div>
+          <div>
+            <label>Twitter</label>
+            <input
+              [(ngModel)]="profileBuffer().socials.twitter"
+              placeholder="https://twitter.com/..."
+            />
+          </div>
+          <div>
+            <label>Email</label>
+            <input [(ngModel)]="profileBuffer().socials.email" placeholder="email@ejemplo.com" />
+          </div>
+        </div>
+
+        <button class="primary-btn" (click)="saveProfile(profileBuffer())">
+          {{ p ? 'Actualizar Perfil' : 'Crear Perfil' }}
+        </button>
       </div>
       }
 
@@ -58,6 +100,7 @@ import { ModalComponent } from '../shared/components/modal.component';
           </button>
         </div>
         }
+        <button class="add-btn" (click)="addNewSkillGroup()">+ Add Category</button>
       </div>
       }
 
@@ -187,6 +230,12 @@ import { ModalComponent } from '../shared/components/modal.component';
           color: #fff;
         }
       }
+
+      .socials-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -200,6 +249,31 @@ export class ModalContainerComponent {
 
   loginEmail = '';
   loginPass = '';
+
+  // Local buffer for profile to allow editing empty or existing data
+  profileBuffer = signal<Profile>({
+    name: '',
+    role: '',
+    motto: '',
+    location: '',
+    bio: '',
+    socials: {
+      github: '',
+      linkedin: '',
+      twitter: '',
+      email: '',
+    },
+  });
+
+  constructor() {
+    // Sync buffer when state profile changes
+    effect(() => {
+      const p = this.state.profile();
+      if (p) {
+        this.profileBuffer.set({ ...p });
+      }
+    });
+  }
 
   getModalTitle(type: string): string {
     const titles: Record<string, string> = {
@@ -222,16 +296,24 @@ export class ModalContainerComponent {
   }
 
   async saveProfile(p: any) {
-    await this.dataService.save('about', 'profile', p);
-    this.terminal.log(`> [COMPILADO] Información de perfil actualizada en Firestore`, 'success');
+    if (!p) return;
+    try {
+      await this.dataService.save('about', 'profile', p);
+      this.terminal.log(`> [COMPILADO] Información de perfil actualizada en Firestore`, 'success');
+      this.modal.close();
+    } catch (e: any) {
+      this.terminal.log(`> [ERROR] Error al guardar perfil: ${e.message || e}`, 'error');
+    }
   }
 
   async saveSkillGroup(group: any) {
+    if (!group || !group.id) return;
     await this.dataService.update('skills', group.id, group);
     this.terminal.log(`> [SYNC] Categoría "${group.category}" sincronizada en la nube`, 'info');
   }
 
   async saveProject(p: any) {
+    if (!p || !p.id) return;
     await this.dataService.update('projects', p.id, p);
     this.terminal.log(`> [DEPLOY] Proyecto "${p.title}" actualizado con éxito`, 'success');
   }
@@ -247,5 +329,15 @@ export class ModalContainerComponent {
     const id = Date.now().toString();
     await this.dataService.save('projects', id, newP);
     this.terminal.log(`> [FS] Creado nuevo registro de proyecto: ${id}`, 'success');
+  }
+
+  async addNewSkillGroup() {
+    const newGroup = {
+      category: 'Nueva Categoría',
+      items: ['Puntero 1', 'Puntero 2'],
+    };
+    const id = Date.now().toString();
+    await this.dataService.save('skills', id, newGroup);
+    this.terminal.log(`> [FS] Nueva sección de habilidades creada: ${id}`, 'success');
   }
 }

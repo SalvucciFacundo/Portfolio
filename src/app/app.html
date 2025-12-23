@@ -3,6 +3,7 @@
   [class.light-theme]="!theme.isDark()"
   [class.sidebar-hidden]="!nav.isSidebarVisible()"
   [class.preview-focused]="nav.viewMode() === 'preview'"
+  [class.has-auth]="auth.currentUser()"
 >
   <!-- Title Bar -->
   <header class="title-bar">

@@ -12,11 +12,23 @@ import { CommonModule } from '@angular/common';
       <div class="avatar">{{ p.name.substring(0, 2).toUpperCase() }}</div>
       <h2>{{ p.name }}</h2>
       <p class="role">{{ p.role }}</p>
-      <div class="bio">"{{ p.motto }}"</div>
+
+      @if (p.location) {
+      <p class="location-text">📍 {{ p.location }}</p>
+      }
+
+      <div class="motto-box">"{{ p.motto }}"</div>
+
+      @if (p.bio) {
+      <p class="bio-text">{{ p.bio }}</p>
+      }
+
       <div class="socials">
-        <button (click)="log($event, 'Angular')">Angular</button>
-        <button (click)="log($event, 'TypeScript')">TypeScript</button>
-        <button (click)="log($event, 'Firebase')">Firebase</button>
+        @if (p.socials.github) {
+        <a [href]="p.socials.github" target="_blank" class="social-link">GitHub</a>
+        } @if (p.socials.linkedin) {
+        <a [href]="p.socials.linkedin" target="_blank" class="social-link">LinkedIn</a>
+        }
       </div>
     </div>
     } @else {
@@ -62,37 +74,53 @@ import { CommonModule } from '@angular/common';
       .role {
         color: #007acc;
         font-weight: 500;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         font-size: 14px;
       }
-      .bio {
+      .location-text {
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 15px;
+      }
+      .motto-box {
         font-size: 13px;
         color: #a9b1d6;
         line-height: 1.6;
         font-style: italic;
+        margin-bottom: 15px;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 10px;
+        border-radius: 8px;
+      }
+      .bio-text {
+        font-size: 13px;
+        color: #ccc;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        text-align: justify;
       }
       .socials {
         margin-top: 20px;
         display: flex;
-        gap: 8px;
+        gap: 12px;
         justify-content: center;
         flex-wrap: wrap;
       }
-      button {
-        font-size: 10px;
-        padding: 6px 12px;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 4px;
+      .social-link {
+        font-size: 11px;
+        padding: 6px 14px;
+        background: rgba(0, 122, 204, 0.1);
+        border-radius: 20px;
         color: #9cdcfe;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        cursor: pointer;
+        border: 1px solid rgba(0, 122, 204, 0.3);
+        text-decoration: none;
         transition: all 0.2s;
-        pointer-events: auto;
 
         &:hover {
           background: rgba(0, 122, 204, 0.3);
           border-color: #007acc;
           transform: translateY(-2px);
+          color: white;
         }
       }
 

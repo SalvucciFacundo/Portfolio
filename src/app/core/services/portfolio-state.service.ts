@@ -34,16 +34,16 @@ export class PortfolioStateService {
 
     this.isLoadingProjects.set(true);
 
-    // We'll use a one-time fetch or a stream for the first batch?
-    // For incremental, a one-time fetch often works better than nested observables.
     this.dataService
       .getProjectsPaginated(this.PAGE_SIZE, this.lastProjectDoc)
       .pipe(
-        tap((newBatch) => {
-          if (newBatch.length < this.PAGE_SIZE) {
+        tap(({ data, lastDoc }) => {
+          if (data.length < this.PAGE_SIZE) {
             this.hasMoreProjects.set(false);
           }
-          this.loadedProjects.update((current) => [...current, ...newBatch]);
+
+          this.lastProjectDoc = lastDoc;
+          this.loadedProjects.update((current) => [...current, ...data]);
           this.isLoadingProjects.set(false);
         })
       )
