@@ -64,7 +64,11 @@
     <!-- Activity Bar -->
     <aside class="activity-bar">
       <div class="action-top">
-        <div class="action-item active">
+        <div
+          class="action-item"
+          [class.active]="nav.isSidebarVisible()"
+          (click)="nav.toggleSidebar()"
+        >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="3" width="18" height="18" rx="2" />
             <path d="M9 3v18" />

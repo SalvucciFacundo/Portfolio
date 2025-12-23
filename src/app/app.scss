@@ -627,6 +627,10 @@
   svg { width: 18px; height: 18px; color: #fff; }
 }
 
+.mobile-only {
+  display: none !important;
+}
+
 @media (max-width: 1024px) {
   .editor-and-preview {
     flex-direction: column !important;

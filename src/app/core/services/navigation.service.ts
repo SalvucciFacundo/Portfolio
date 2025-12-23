@@ -12,7 +12,7 @@ export interface FileEntry {
   providedIn: 'root',
 })
 export class NavigationService {
-  isSidebarVisible = signal(typeof window !== 'undefined' ? window.innerWidth > 768 : true);
+  isSidebarVisible = signal(typeof window !== 'undefined' ? window.innerWidth > 992 : true);
   viewMode = signal<'code' | 'preview'>('preview');
   scrollToRequest = signal<string | null>(null);
 
@@ -23,7 +23,9 @@ export class NavigationService {
   // Request a scroll to a specific section
   requestScroll(sectionId: string) {
     this.scrollToRequest.set(sectionId);
-    this.isSidebarVisible.set(false); // Close sidebar on request
+    if (window.innerWidth <= 768) {
+      this.isSidebarVisible.set(false); // Close sidebar on request only on mobile
+    }
   }
 
   toggleViewMode() {
