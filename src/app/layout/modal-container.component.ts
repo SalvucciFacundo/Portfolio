@@ -36,6 +36,23 @@ import { Profile } from '../core/models/portfolio.model';
         <label>Role</label>
         <input [(ngModel)]="profileBuffer().role" placeholder="Tu Rol" />
 
+        <label>Status</label>
+        <input [(ngModel)]="profileBuffer().status" placeholder="Ej: Open to Work" />
+
+        <div class="education-grid">
+          <div>
+            <label>Degree</label>
+            <input
+              [(ngModel)]="profileBuffer().education!.degree"
+              placeholder="Ej: Tecnicatura en Programación"
+            />
+          </div>
+          <div>
+            <label>University</label>
+            <input [(ngModel)]="profileBuffer().education!.university" placeholder="Ej: UTN" />
+          </div>
+        </div>
+
         <label>Motto</label>
         <input [(ngModel)]="profileBuffer().motto" placeholder="Tu Lema" />
 
@@ -391,7 +408,8 @@ import { Profile } from '../core/models/portfolio.model';
         border-radius: 3px;
       }
 
-      .socials-grid {
+      .socials-grid,
+      .education-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 10px;
@@ -414,9 +432,14 @@ export class ModalContainerComponent {
   profileBuffer = signal<Profile>({
     name: '',
     role: '',
+    status: 'Open to Work',
     motto: '',
     location: '',
     bio: '',
+    education: {
+      degree: '',
+      university: '',
+    },
     socials: {
       github: '',
       linkedin: '',

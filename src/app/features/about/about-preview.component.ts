@@ -9,13 +9,29 @@ import { CommonModule } from '@angular/common';
   template: `
     @if (state.profile(); as p) {
     <div class="profile-card">
-      <div class="avatar">{{ p.name.substring(0, 2).toUpperCase() }}</div>
+      <div class="header">
+        <div class="avatar">{{ p.name.substring(0, 2).toUpperCase() }}</div>
+        @if (p.status) {
+        <div class="status-badge">{{ p.status }}</div>
+        }
+      </div>
+
       <h2>{{ p.name }}</h2>
       <p class="role">{{ p.role }}</p>
 
-      @if (p.location) {
-      <p class="location-text">📍 {{ p.location }}</p>
-      }
+      <div class="info-grid">
+        @if (p.location) {
+        <div class="info-item">
+          <span class="icon">📍</span>
+          <span>{{ p.location }}</span>
+        </div>
+        } @if (p.education) {
+        <div class="info-item">
+          <span class="icon">🎓</span>
+          <span>{{ p.education.degree }} ({{ p.education.university }})</span>
+        </div>
+        }
+      </div>
 
       <div class="motto-box">"{{ p.motto }}"</div>
 
@@ -53,20 +69,42 @@ import { CommonModule } from '@angular/common';
         z-index: 10;
         position: relative;
       }
+      .header {
+        position: relative;
+        margin-bottom: 20px;
+      }
       .avatar {
         width: 80px;
         height: 80px;
         background: linear-gradient(45deg, #007acc, #4ec9b0);
         border-radius: 50%;
-        margin: 0 auto 20px;
+        margin: 0 auto;
         display: flex;
         justify-content: center;
         align-items: center;
         font-size: 28px;
         font-weight: bold;
         color: white;
+        border: 4px solid rgba(255, 255, 255, 0.05);
+      }
+      .status-badge {
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #4ec9b0;
+        color: #0b0e14;
+        font-size: 10px;
+        font-weight: 800;
+        padding: 4px 12px;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 10px rgba(78, 201, 176, 0.3);
+        white-space: nowrap;
       }
       h2 {
+        margin-top: 10px;
         margin-bottom: 5px;
         color: white;
         font-size: 20px;
@@ -74,13 +112,28 @@ import { CommonModule } from '@angular/common';
       .role {
         color: #007acc;
         font-weight: 500;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
         font-size: 14px;
       }
-      .location-text {
+      .info-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 20px;
+        background: rgba(255, 255, 255, 0.02);
+        padding: 12px;
+        border-radius: 12px;
+      }
+      .info-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
         font-size: 12px;
         color: #888;
-        margin-bottom: 15px;
+        text-align: left;
+      }
+      .info-item .icon {
+        font-size: 14px;
       }
       .motto-box {
         font-size: 13px;
@@ -97,7 +150,6 @@ import { CommonModule } from '@angular/common';
         color: #ccc;
         line-height: 1.5;
         margin-bottom: 20px;
-        text-align: justify;
       }
       .socials {
         margin-top: 20px;

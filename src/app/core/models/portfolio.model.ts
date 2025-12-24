@@ -2,9 +2,14 @@ export interface Profile {
   id?: string;
   name: string;
   role: string;
+  status?: string;
   location: string;
   motto: string;
   bio: string;
+  education?: {
+    degree: string;
+    university: string;
+  };
   avatarUrl?: string;
   socials: {
     github?: string;
