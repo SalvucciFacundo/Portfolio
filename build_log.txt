@@ -1,0 +1,68 @@
+[33mÔØ»[39m Building...
+[32mÔ£ö[39m Building...
+[35mBrowser bundles[39m     
+[1mInitial chunk files[22m [2m | [22m[1mNames[22m             [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-UZIL7WOJ.js[39m   [2m | [22m[2m-[22m                 [2m | [22m[36m243.76 kB[39m[2m | [22m               [36m66.16 kB[39m
+[32mchunk-XVDFP7XA.js[39m   [2m | [22m[2m-[22m                 [2m | [22m[36m182.11 kB[39m[2m | [22m               [36m37.15 kB[39m
+[32mchunk-A6EIYCDW.js[39m   [2m | [22m[2m-[22m                 [2m | [22m[36m172.28 kB[39m[2m | [22m               [36m50.94 kB[39m
+[32mchunk-HPTGOUTG.js[39m   [2m | [22m[2m-[22m                 [2m | [22m[36m107.83 kB[39m[2m | [22m               [36m26.69 kB[39m
+[32mmain-OSA5EMID.js[39m    [2m | [22m[2mmain[22m              [2m | [22m [36m87.67 kB[39m[2m | [22m               [36m16.16 kB[39m
+[32mstyles-F63JBJ5S.css[39m [2m | [22m[2mstyles[22m            [2m | [22m[36m618 bytes[39m[2m | [22m              [36m618 bytes[39m
+
+[1m [22m                   [2m | [22m[1mInitial total[22m     [2m | [22m[1m[93m794.27 kB[39m[22m[2m | [22m              [1m197.71 kB[22m
+
+[1mLazy chunk files[22m    [2m | [22m[1mNames[22m             [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-SAQAV4W3.js[39m   [2m | [22m[2madmin-component[22m   [2m | [22m  [36m5.98 kB[39m[2m | [22m                [36m1.80 kB[39m
+[32mchunk-L2QQFQTE.js[39m   [2m | [22m[2mlogin-component[22m   [2m | [22m  [36m2.76 kB[39m[2m | [22m                [36m1.10 kB[39m
+[32mchunk-XQ6JGQ64.js[39m   [2m | [22m[2mabout-component[22m   [2m | [22m  [36m2.17 kB[39m[2m | [22m              [36m815 bytes[39m
+[32mchunk-JY227N26.js[39m   [2m | [22m[2mskills-component[22m  [2m | [22m  [36m1.98 kB[39m[2m | [22m              [36m879 bytes[39m
+[32mchunk-2HBQDI44.js[39m   [2m | [22m[2mprojects-component[22m[2m | [22m  [36m1.79 kB[39m[2m | [22m              [36m794 bytes[39m
+[32mchunk-RZ6LCA2X.js[39m   [2m | [22m[2mcontact-component[22m [2m | [22m  [36m1.61 kB[39m[2m | [22m              [36m669 bytes[39m
+
+
+[35mServer bundles[39m      
+[1mInitial chunk files[22m [2m | [22m[1mNames[22m             [2m | [22m [1mRaw size[22m
+[32mserver.mjs[39m          [2m | [22m[2mserver[22m            [2m | [22m[36m805.33 kB[39m[2m | [22m                       
+[32mchunk-DHW4KVM6.mjs[39m  [2m | [22m[2m-[22m                 [2m | [22m[36m589.31 kB[39m[2m | [22m                       
+[32mmain.server.mjs[39m     [2m | [22m[2mmain.server[22m       [2m | [22m[36m538.11 kB[39m[2m | [22m                       
+[32mpolyfills.server.mjs[39m[2m | [22m[2mpolyfills.server[22m  [2m | [22m[36m233.48 kB[39m[2m | [22m                       
+[32mchunk-T2DPS3IU.mjs[39m  [2m | [22m[2m-[22m                 [2m | [22m[36m168.68 kB[39m[2m | [22m                       
+[32mchunk-V7SRHJOX.mjs[39m  [2m | [22m[2m-[22m                 [2m | [22m[36m157.31 kB[39m[2m | [22m                       
+[32mchunk-UY6K3SRR.mjs[39m  [2m | [22m[2m-[22m                 [2m | [22m[36m108.45 kB[39m[2m | [22m                       
+[32mchunk-N7QBYMCK.mjs[39m  [2m | [22m[2m-[22m                 [2m | [22m  [36m1.36 kB[39m[2m | [22m                       
+[32mchunk-L2MVFUKD.mjs[39m  [2m | [22m[2m-[22m                 [2m | [22m  [36m1.32 kB[39m[2m | [22m                       
+
+[1mLazy chunk files[22m    [2m | [22m[1mNames[22m             [2m | [22m [1mRaw size[22m
+[32mchunk-RHDGF2TI.mjs[39m  [2m | [22m[2mxhr2[22m              [2m | [22m [36m12.14 kB[39m[2m | [22m                       
+[32mchunk-5WMVLZXW.mjs[39m  [2m | [22m[2mxhr2[22m              [2m | [22m [36m12.07 kB[39m[2m | [22m                       
+[32mchunk-47HNFTVY.mjs[39m  [2m | [22m[2madmin-component[22m   [2m | [22m  [36m6.05 kB[39m[2m | [22m                       
+[32mchunk-KRD364AR.mjs[39m  [2m | [22m[2mlogin-component[22m   [2m | [22m  [36m2.83 kB[39m[2m | [22m                       
+[32mchunk-DTCTHMHZ.mjs[39m  [2m | [22m[2mabout-component[22m   [2m | [22m  [36m2.23 kB[39m[2m | [22m                       
+[32mchunk-RN2QFVB4.mjs[39m  [2m | [22m[2mskills-component[22m  [2m | [22m  [36m2.05 kB[39m[2m | [22m                       
+[32mchunk-I37LLFMK.mjs[39m  [2m | [22m[2mprojects-component[22m[2m | [22m  [36m1.86 kB[39m[2m | [22m                       
+[32mchunk-PIKWUA6B.mjs[39m  [2m | [22m[2mcontact-component[22m [2m | [22m  [36m1.68 kB[39m[2m | [22m                       
+
+[35mPrerendered 7 static routes.[39m
+Application bundle generation failed. [9.549 seconds] - 2025-12-24T03:04:04.537Z
+
+Ôû▓ [WARNING] bundle initial exceeded maximum budget. Budget 500.00 kB was not met by 294.27 kB with a total of 794.27 kB.
+
+
+Ôû▓ [WARNING] src/app/app.scss exceeded maximum budget. Budget 4.00 kB was not met by 12.30 kB with a total of 16.30 kB.
+
+
+Ôû▓ [WARNING] Module '@grpc/grpc-js' used by 'node_modules/@angular/fire/node_modules/@firebase/firestore/dist/index.node.mjs' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] Module '@grpc/proto-loader' used by 'node_modules/@angular/fire/node_modules/@firebase/firestore/dist/index.node.mjs' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+X [ERROR] src/app/app.scss exceeded maximum budget. Budget 8.00 kB was not met by 8.30 kB with a total of 16.30 kB.
+
+

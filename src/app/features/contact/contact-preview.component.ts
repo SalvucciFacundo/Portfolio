@@ -1,22 +1,30 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { TerminalService } from '../../core/services/terminal.service';
+import { PortfolioStateService } from '../../core/services/portfolio-state.service';
 
 @Component({
   selector: 'app-contact-preview',
   template: `
     <div class="contact-card shadow">
-      <h3>¡Hablemos!</h3>
-      <p>Si tienes una propuesta o quieres colaborar, no dudes en escribirme.</p>
+      <h3>{{ state.contact()?.title || '¡Hablemos!' }}</h3>
+      <p>
+        {{
+          state.contact()?.message ||
+            'Si tienes una propuesta o quieres colaborar, no dudes en escribirme.'
+        }}
+      </p>
 
       <div class="contact-links">
-        <a href="mailto:facundo.salvucci@example.com" class="link-item" (click)="log('Email')">
+        @if (state.profile()?.socials?.email; as email) {
+        <a [href]="'mailto:' + email" class="link-item" (click)="log('Email')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="m22 2-7 20-4-9-9-4Z" />
             <path d="M22 2 11 13" />
           </svg>
           <span>Email</span>
         </a>
-        <a href="#" class="link-item" (click)="log('LinkedIn')">
+        } @if (state.profile()?.socials?.linkedin; as linkedin) {
+        <a [href]="linkedin" target="_blank" class="link-item" (click)="log('LinkedIn')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path
               d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
@@ -26,6 +34,23 @@ import { TerminalService } from '../../core/services/terminal.service';
           </svg>
           <span>LinkedIn</span>
         </a>
+        } @if (state.profile()?.socials?.github; as github) {
+        <a [href]="github" target="_blank" class="link-item" (click)="log('GitHub')">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            class="github-icon"
+          >
+            <path
+              d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"
+            />
+            <path d="M9 18c-4.51 2-5-2-7-2" />
+          </svg>
+          <span>GitHub</span>
+        </a>
+        }
       </div>
     </div>
   `,
@@ -82,6 +107,7 @@ import { TerminalService } from '../../core/services/terminal.service';
 })
 export class ContactPreviewComponent {
   private terminal = inject(TerminalService);
+  protected state = inject(PortfolioStateService);
 
   log(platform: string) {
     this.terminal.log(`> Intentando conectar vía ${platform}...`, 'info');

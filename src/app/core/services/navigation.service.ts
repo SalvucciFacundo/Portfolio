@@ -93,8 +93,17 @@ export class NavigationService {
 
     this.allFiles.update((files) =>
       files.map((f) => {
+        // Si el archivo que estamos abriendo pertenece a una sección (about, skills, etc)
+        if (targetFile.path) {
+          // Cerramos cualquier otro archivo que también pertenezca a una sección
+          // Esto logra el efecto de "reemplazo" que buscas
+          if (f.path) {
+            return { ...f, isOpen: f.name === fileName };
+          }
+        }
+
+        // Comportamiento para archivos de sistema/root (opcional: podrías dejarlos coexistir)
         if (window.innerWidth <= 768) {
-          // On mobile, only allow ONE file to be open at a time to prevent accumulation
           return { ...f, isOpen: f.name === fileName };
         }
         return { ...f, isOpen: f.name === fileName ? true : f.isOpen };
@@ -143,10 +152,27 @@ export class NavigationService {
   }
 
   private goToSection(section: string) {
-    // Find the primary component file for this section
-    const file = this.allFiles().find((f) => f.path === section && f.name.endsWith('.ts'));
-    if (file) {
-      this.openFile(file.name);
+    this.allFiles.update((files) =>
+      files.map((f) => {
+        // Cierra archivos de otras secciones de contenido (about, skills, etc)
+        // para evitar que se acumulen demasiadas pestañas
+        if (f.path && f.path !== section && this.sections.includes(f.path)) {
+          return { ...f, isOpen: false };
+        }
+        // Abre automáticamente los archivos de la sección actual
+        if (f.path === section) {
+          return { ...f, isOpen: true };
+        }
+        return f;
+      })
+    );
+
+    // Define el archivo .ts como el activo por defecto al cambiar de sección
+    const primaryFile = this.allFiles().find(
+      (f) => f.path === section && f.name.endsWith('.component.ts')
+    );
+    if (primaryFile) {
+      this.activeFilePath.set(primaryFile.name);
     }
   }
 

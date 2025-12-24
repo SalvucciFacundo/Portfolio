@@ -11,6 +11,7 @@ import {
   limit,
   startAfter,
   getDocs,
+  getDoc,
   onSnapshot,
   DocumentSnapshot,
   QueryDocumentSnapshot,
@@ -69,6 +70,19 @@ export class DataService {
     // Ensure we don't save the 'id' field inside the document data
     const { id: _, ...cleanData } = data;
     return setDoc(docItem, cleanData);
+  }
+
+  // Delete a document
+  delete(path: string, id: string) {
+    const docItem = doc(this.firestore, `${path}/${id}`);
+    return deleteDoc(docItem);
+  }
+
+  // Get a single document as a Promise (one-time fetch)
+  async get(path: string, id: string): Promise<any> {
+    const docItem = doc(this.firestore, `${path}/${id}`);
+    const snapshot = await getDoc(docItem);
+    return snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } : null;
   }
 
   // Paginated projects

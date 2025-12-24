@@ -13,6 +13,11 @@ export class PortfolioStateService {
   // Real-time Signal for Profile
   profile = toSignal(this.dataService.getDoc<Profile>('about', 'profile'));
 
+  // Real-time Signal for Contact info
+  contact = toSignal(
+    this.dataService.getDoc<{ title: string; message: string }>('about', 'contact')
+  );
+
   // Real-time Signal for Skills
   skills = toSignal(this.dataService.getCollection<SkillGroup>('skills'), { initialValue: [] });
 

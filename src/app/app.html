@@ -293,7 +293,7 @@
               } @if (nav.getSectionIndex() < nav.getTotalSections() - 1) {
               <button class="nav-arrow next" (click)="nav.nextSection()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                  <path d="m9 18 6-6-6-6" transform="rotate(180 12 12)" />
+                  <path d="m9 18 6-6-6-6" />
                 </svg>
               </button>
               }
@@ -331,6 +331,11 @@
                 </div>
 
                 <div id="contact-section" class="preview-section-wrapper">
+                  @if (auth.currentUser()) {
+                  <button class="edit-overlay-btn" (click)="modal.open('edit-contact')">
+                    Edit Contact
+                  </button>
+                  }
                   <app-contact-preview></app-contact-preview>
                 </div>
               </div>

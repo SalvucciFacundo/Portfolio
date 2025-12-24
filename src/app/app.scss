@@ -30,7 +30,7 @@
 .light-theme {
   --bg-editor: #f3f3f3;
   --bg-sidebar: #f3f3f3;
-  --bg-activity-bar: #f3f3f3; 
+  --bg-activity-bar: #f3f3f3;
   --bg-status-bar: #007acc;
   --bg-title-bar: #dddddd;
   --bg-tabs: #ececec;
@@ -46,10 +46,16 @@
     border-right: 1px solid #e5e5e5;
     .action-item {
       color: #616161;
-      &.active { color: #007acc; }
-      &:hover { color: #000; }
+      &.active {
+        color: #007acc;
+      }
+      &:hover {
+        color: #000;
+      }
     }
-    .action-bottom .action-item { color: #616161; }
+    .action-bottom .action-item {
+      color: #616161;
+    }
   }
 }
 
@@ -108,7 +114,7 @@
     display: flex;
     z-index: 10;
     margin-right: -10px;
-    
+
     .theme-toggle {
       width: 45px;
       height: 30px;
@@ -118,7 +124,7 @@
       cursor: pointer;
       position: relative;
       background: rgba(0, 122, 204, 0.1); /* Subtle accent background to show it's active */
-      
+
       &::after {
         content: '';
         position: absolute;
@@ -128,15 +134,17 @@
         border-radius: 50%;
         background-color: var(--accent-color); /* Small "functional" dot indicator */
       }
-      
-      &:hover { 
+
+      &:hover {
         background: rgba(0, 122, 204, 0.3);
-        svg { transform: scale(1.15); }
+        svg {
+          transform: scale(1.15);
+        }
       }
-      
-      svg { 
-        width: 14px; 
-        height: 14px; 
+
+      svg {
+        width: 14px;
+        height: 14px;
         color: #ffca28; /* Gold for the sun/moon to make it pop */
         transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       }
@@ -149,8 +157,14 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      &:hover { background: rgba(255, 255, 255, 0.1); }
-      svg { width: 12px; height: 12px; color: currentColor; }
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      svg {
+        width: 12px;
+        height: 12px;
+        color: currentColor;
+      }
     }
     .close:hover {
       background: #e81123;
@@ -162,10 +176,19 @@
 .ide-container.light-theme {
   .title-bar {
     .window-controls {
-      .control-btn { color: #333; }
-      .control-btn:hover { background: rgba(0,0,0,0.05); }
-      .theme-toggle:hover { background: rgba(0, 122, 204, 0.2); }
-      .close:hover { background: #e81123; color: white; }
+      .control-btn {
+        color: #333;
+      }
+      .control-btn:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+      .theme-toggle:hover {
+        background: rgba(0, 122, 204, 0.2);
+      }
+      .close:hover {
+        background: #e81123;
+        color: white;
+      }
     }
   }
 }
@@ -273,10 +296,10 @@
       gap: 8px;
       cursor: pointer;
 
-      &.active { 
+      &.active {
         background-color: var(--bg-tab-active);
         color: var(--fg-active);
-        border-top: 1px solid var(--accent-color); 
+        border-top: 1px solid var(--accent-color);
       }
 
       svg {
@@ -563,8 +586,12 @@
           box-shadow: 0 0 20px rgba(0, 122, 204, 0.4);
         }
 
-        &.prev { left: 20px; }
-        &.next { right: 20px; }
+        &.prev {
+          left: 20px;
+        }
+        &.next {
+          right: 20px;
+        }
 
         svg {
           width: 20px;
@@ -686,8 +713,14 @@
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;
-  &:hover { background: rgba(255,255,255,0.1); }
-  svg { width: 18px; height: 18px; color: #fff; }
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  svg {
+    width: 18px;
+    height: 18px;
+    color: #fff;
+  }
 }
 
 .mobile-only {
@@ -697,7 +730,8 @@
 @media (max-width: 1024px) {
   .editor-and-preview {
     flex-direction: column !important;
-    .editor, .preview-shell {
+    .editor,
+    .preview-shell {
       width: 100% !important;
       height: 50% !important;
     }
@@ -709,9 +743,13 @@
 }
 
 @media (max-width: 768px) {
-  .desktop-only { display: none !important; }
-  .mobile-only { display: flex !important; }
-  
+  .desktop-only {
+    display: none !important;
+  }
+  .mobile-only {
+    display: flex !important;
+  }
+
   .workspace-area {
     flex-direction: column !important;
     position: relative;
@@ -730,21 +768,21 @@
 
     /* If we are in code mode, we slide the preview body but KEEP the header? 
        Actually, user wants tabs to stay. Let's make the shell header persistent. */
-    
+
     .preview-tabs-bar {
       height: 40px !important;
       display: flex !important;
       background-color: var(--bg-tabs) !important;
       z-index: 20;
-      
+
       .tab {
         flex: 1;
         justify-content: center;
         border-right: 1px solid var(--border-color);
         background-color: var(--bg-tab-inactive);
-        &.active { 
+        &.active {
           background-color: var(--bg-tab-active);
-          border-top: 2px solid var(--accent-color); 
+          border-top: 2px solid var(--accent-color);
         }
       }
     }
@@ -770,26 +808,33 @@
     z-index: 10;
     background-color: var(--bg-editor);
     border: none !important;
-    
+
     /* Only show when NOT in preview mode */
     .ide-container.preview-focused & {
       display: none !important;
     }
 
-    .editor-shell { height: 100%; }
-    .editor-content { padding: 10px; }
+    .editor-shell {
+      height: 100%;
+    }
+    .editor-content {
+      padding: 10px;
+    }
   }
 
-  .mobile-menu-toggle { display: flex; }
-  
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
   .app-title {
     font-size: 9px;
     max-width: 150px;
   }
 
   .window-controls {
-    .control-btn:not(.close), .theme-toggle {
-       display: none !important; 
+    .control-btn:not(.close),
+    .theme-toggle {
+      display: none !important;
     }
   }
 
@@ -799,7 +844,7 @@
     top: 0;
     bottom: 0;
     z-index: 1000;
-    box-shadow: 10px 0 20px rgba(0,0,0,0.5);
+    box-shadow: 10px 0 20px rgba(0, 0, 0, 0.5);
     width: 260px;
   }
 
@@ -824,18 +869,25 @@
   .nav-arrow {
     width: 36px;
     height: 36px;
-    &.prev { left: 10px; }
-    &.next { right: 10px; }
+    &.prev {
+      left: 10px;
+    }
+    &.next {
+      right: 10px;
+    }
   }
 
-  .terminal, .breadcrumb, .tabs-bar, .chrome-header {
-    display: none !important; 
+  .terminal,
+  .breadcrumb,
+  .tabs-bar,
+  .chrome-header {
+    display: none !important;
   }
 }
 
-.preview-section {
+.preview-section-wrapper {
   position: relative;
-  
+
   .edit-overlay-btn {
     position: absolute;
     top: 10px;
@@ -850,16 +902,15 @@
     cursor: pointer;
     opacity: 0;
     transition: opacity 0.2s, transform 0.2s;
-    
+
     &:hover {
       background: #007acc;
       transform: scale(1.05);
     }
   }
-  
+
   &:hover .edit-overlay-btn,
   .ide-container.has-auth & .edit-overlay-btn {
     opacity: 1;
   }
 }
-
