@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "dev": "rd /s /q .angular && ng serve",
+    "dev": "rd /s /q .angular && ng serve > dev-server.log 2>&1",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
