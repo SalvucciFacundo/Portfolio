@@ -1,6 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { NavigationService, FileEntry } from '../core/services/navigation.service';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -264,11 +263,9 @@ import { CommonModule } from '@angular/common';
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class SidebarComponent {
   protected readonly nav = inject(NavigationService);
-  private router = inject(Router);
 
   private readonly ICO_PATH = '/assets/material-icons';
 
@@ -328,22 +325,12 @@ export class SidebarComponent {
   selectFile(file: FileEntry) {
     if (file.folder === 'root') return;
 
-    // On mobile, if in preview mode, we scroll to the section instead of switching to code
-    if (window.innerWidth <= 768 && this.nav.viewMode() === 'preview' && file.path) {
-      this.nav.requestScroll(file.path);
-      this.nav.openFile(file.name); // Still update active file state
-      return;
-    }
-
-    this.nav.openFile(file.name, true); // true = explicit intent to see code
+    // Open file and update state
+    this.nav.openFile(file.name, true);
 
     // Auto-close sidebar on mobile
     if (window.innerWidth <= 768) {
       this.nav.isSidebarVisible.set(false);
-    }
-
-    if (file.path) {
-      this.router.navigate([file.path]);
     }
   }
 }

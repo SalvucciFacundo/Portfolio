@@ -16,6 +16,13 @@ export class NavigationService {
   viewMode = signal<'code' | 'preview'>('preview');
   scrollToRequest = signal<string | null>(null);
 
+  // Section-based navigation for horizontal preview
+  private sections = ['about', 'skills', 'projects', 'contact'];
+  activeSection = computed(() => {
+    const file = this.activeFile();
+    return file?.path || 'about';
+  });
+
   toggleSidebar() {
     this.isSidebarVisible.update((v: boolean) => !v);
   }
@@ -117,5 +124,37 @@ export class NavigationService {
 
   setActive(fileName: string) {
     this.activeFilePath.set(fileName);
+  }
+
+  nextSection() {
+    const current = this.activeSection();
+    const idx = this.sections.indexOf(current);
+    if (idx < this.sections.length - 1) {
+      this.goToSection(this.sections[idx + 1]);
+    }
+  }
+
+  prevSection() {
+    const current = this.activeSection();
+    const idx = this.sections.indexOf(current);
+    if (idx > 0) {
+      this.goToSection(this.sections[idx - 1]);
+    }
+  }
+
+  private goToSection(section: string) {
+    // Find the primary component file for this section
+    const file = this.allFiles().find((f) => f.path === section && f.name.endsWith('.ts'));
+    if (file) {
+      this.openFile(file.name);
+    }
+  }
+
+  getSectionIndex() {
+    return this.sections.indexOf(this.activeSection());
+  }
+
+  getTotalSections() {
+    return this.sections.length;
   }
 }

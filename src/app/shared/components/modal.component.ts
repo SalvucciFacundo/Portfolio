@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-modal',
-  standalone: true,
   imports: [CommonModule],
   template: `
     <div class="modal-overlay" (click)="close.emit()">

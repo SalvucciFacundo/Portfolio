@@ -79,7 +79,6 @@ import { TerminalService } from '../../core/services/terminal.service';
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class ContactPreviewComponent {
   private terminal = inject(TerminalService);

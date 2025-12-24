@@ -282,33 +282,57 @@
                 </div>
               </nav>
             </header>
-            <main class="browser-body" #previewScroll (scroll)="onPreviewScroll($event)">
-              <div id="about-section" class="preview-section">
-                @if (auth.currentUser()) {
-                <button class="edit-overlay-btn" (click)="modal.open('edit-profile')">
-                  Edit Profile
-                </button>
-                }
-                <app-about-preview></app-about-preview>
-              </div>
-              <div id="skills-section" class="preview-section">
-                @if (auth.currentUser()) {
-                <button class="edit-overlay-btn" (click)="modal.open('edit-skills')">
-                  Edit Skills
-                </button>
-                }
-                <app-skills-preview></app-skills-preview>
-              </div>
-              <div id="projects-section" class="preview-section">
-                @if (auth.currentUser()) {
-                <button class="edit-overlay-btn" (click)="modal.open('edit-projects')">
-                  Edit Projects
-                </button>
-                }
-                <app-projects-preview></app-projects-preview>
-              </div>
-              <div id="contact-section" class="preview-section">
-                <app-contact-preview></app-contact-preview>
+            <main class="browser-body">
+              <!-- Navigation Arrows -->
+              @if (nav.getSectionIndex() > 0) {
+              <button class="nav-arrow prev" (click)="nav.prevSection()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </button>
+              } @if (nav.getSectionIndex() < nav.getTotalSections() - 1) {
+              <button class="nav-arrow next" (click)="nav.nextSection()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <path d="m9 18 6-6-6-6" transform="rotate(180 12 12)" />
+                </svg>
+              </button>
+              }
+
+              <!-- Horizontal Slider Container -->
+              <div
+                class="preview-slider"
+                [style.transform]="'translateX(-' + nav.getSectionIndex() * 100 + '%)'"
+              >
+                <div id="about-section" class="preview-section-wrapper">
+                  @if (auth.currentUser()) {
+                  <button class="edit-overlay-btn" (click)="modal.open('edit-profile')">
+                    Edit Profile
+                  </button>
+                  }
+                  <app-about-preview></app-about-preview>
+                </div>
+
+                <div id="skills-section" class="preview-section-wrapper">
+                  @if (auth.currentUser()) {
+                  <button class="edit-overlay-btn" (click)="modal.open('edit-skills')">
+                    Edit Skills
+                  </button>
+                  }
+                  <app-skills-preview></app-skills-preview>
+                </div>
+
+                <div id="projects-section" class="preview-section-wrapper">
+                  @if (auth.currentUser()) {
+                  <button class="edit-overlay-btn" (click)="modal.open('edit-projects')">
+                    Edit Projects
+                  </button>
+                  }
+                  <app-projects-preview></app-projects-preview>
+                </div>
+
+                <div id="contact-section" class="preview-section-wrapper">
+                  <app-contact-preview></app-contact-preview>
+                </div>
               </div>
             </main>
           </div>

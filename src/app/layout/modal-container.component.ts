@@ -11,7 +11,6 @@ import { Profile } from '../core/models/portfolio.model';
 
 @Component({
   selector: 'app-modal-container',
-  standalone: true,
   imports: [CommonModule, FormsModule, ModalComponent],
   template: `
     @if (modal.activeModal(); as type) {
