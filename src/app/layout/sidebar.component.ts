@@ -46,7 +46,8 @@ import { CommonModule } from '@angular/common';
                   </div>
 
                   <div class="folder-items">
-                    @for (module of ['about', 'skills', 'projects', 'contact']; track module) {
+                    @for (module of ['home', 'about', 'skills', 'projects', 'contact']; track
+                    module) {
                     <div class="folder open">
                       <div class="folder-header">
                         <svg class="chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></svg>
@@ -275,6 +276,7 @@ export class SidebarComponent {
 
   getFolderStyle(module: string) {
     const icons: Record<string, string> = {
+      home: 'folder-hook-open.svg',
       about: 'folder-client-open.svg',
       skills: 'folder-resource-open.svg',
       projects: 'folder-project-open.svg',
@@ -309,11 +311,11 @@ export class SidebarComponent {
         config: 'editorconfig.svg',
         git: 'git.svg',
         angular: 'angular.svg',
+        shell: 'console.svg',
+        routing: 'routing.svg',
       };
       icon = mapping[file.type] || 'file.svg';
     }
-
-    if (file.name.endsWith('.pdf')) icon = 'pdf.svg';
 
     return { 'background-image': `url("${this.ICO_PATH}/${icon}")` };
   }

@@ -13,6 +13,7 @@ import { NavigationService } from './core/services/navigation.service';
 import { TerminalService } from './core/services/terminal.service';
 import { ThemeService } from './core/services/theme.service';
 import { AboutPreviewComponent } from './features/about/about-preview.component';
+import { HomePreviewComponent } from './features/home/home-preview.component';
 import { SkillsPreviewComponent } from './features/skills/skills-preview.component';
 import { ProjectsPreviewComponent } from './features/projects/projects-preview.component';
 import { ContactPreviewComponent } from './features/contact/contact-preview.component';
@@ -27,6 +28,7 @@ import { AuthService } from './core/auth/auth.service';
     RouterOutlet,
     SidebarComponent,
     TabsBarComponent,
+    HomePreviewComponent,
     AboutPreviewComponent,
     SkillsPreviewComponent,
     ProjectsPreviewComponent,

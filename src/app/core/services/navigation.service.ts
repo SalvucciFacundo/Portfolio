@@ -3,7 +3,7 @@ import { Injectable, signal, computed } from '@angular/core';
 export interface FileEntry {
   name: string;
   path: string; // The route/preview path
-  type: 'ts' | 'scss' | 'md' | 'json' | 'html' | 'config' | 'git' | 'angular';
+  type: 'ts' | 'scss' | 'md' | 'json' | 'html' | 'config' | 'git' | 'angular' | 'shell' | 'routing';
   folder: string;
   isOpen?: boolean;
 }
@@ -16,11 +16,37 @@ export class NavigationService {
   viewMode = signal<'code' | 'preview'>('preview');
   scrollToRequest = signal<string | null>(null);
 
+  getFileIcon(type: string): string {
+    const base = 'https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/master/icons';
+    switch (type) {
+      case 'ts':
+        return `${base}/typescript.svg`;
+      case 'html':
+        return `${base}/html.svg`;
+      case 'scss':
+        return `${base}/sass.svg`;
+      case 'json':
+        return `${base}/json.svg`;
+      case 'md':
+        return `${base}/markdown.svg`;
+      case 'angular':
+        return `${base}/angular.svg`;
+      case 'config':
+        return `${base}/editorconfig.svg`;
+      case 'shell':
+        return `${base}/console.svg`;
+      case 'routing':
+        return `${base}/routing.svg`;
+      default:
+        return `${base}/file.svg`;
+    }
+  }
+
   // Section-based navigation for horizontal preview
-  private sections = ['about', 'skills', 'projects', 'contact'];
+  private sections = ['home', 'about', 'skills', 'projects', 'contact'];
   activeSection = computed(() => {
     const file = this.activeFile();
-    return file?.path || 'about';
+    return file?.path || 'home';
   });
 
   toggleSidebar() {
@@ -40,46 +66,22 @@ export class NavigationService {
   }
 
   private allFiles = signal<FileEntry[]>([
-    // About Module
-    {
-      name: 'about.component.ts',
-      path: 'about',
-      type: 'ts',
-      folder: 'src/app/about',
-      isOpen: true,
-    },
-    { name: 'about.component.html', path: 'about', type: 'html', folder: 'src/app/about' },
-    { name: 'about.service.ts', path: 'about', type: 'ts', folder: 'src/app/about' },
-
-    // Skills Module
-    { name: 'skills.component.ts', path: 'skills', type: 'ts', folder: 'src/app/skills' },
-    { name: 'skills.component.html', path: 'skills', type: 'html', folder: 'src/app/skills' },
+    { name: 'home.sh', path: 'home', type: 'shell', folder: 'src/app/home', isOpen: true },
+    { name: 'about.component.ts', path: 'about', type: 'ts', folder: 'src/app/about' },
     { name: 'skills.service.ts', path: 'skills', type: 'ts', folder: 'src/app/skills' },
-
-    // Projects Module
-    { name: 'projects.component.ts', path: 'projects', type: 'ts', folder: 'src/app/projects' },
     { name: 'projects.component.html', path: 'projects', type: 'html', folder: 'src/app/projects' },
-    { name: 'projects.service.ts', path: 'projects', type: 'ts', folder: 'src/app/projects' },
-
-    // Contact Module
-    { name: 'contact.component.ts', path: 'contact', type: 'ts', folder: 'src/app/contact' },
-    { name: 'contact.component.html', path: 'contact', type: 'html', folder: 'src/app/contact' },
-    { name: 'contact.service.ts', path: 'contact', type: 'ts', folder: 'src/app/contact' },
+    { name: 'contact.ts', path: 'contact', type: 'routing', folder: 'src/app/contact' },
 
     // Dummy / Root Files for aesthetics
     { name: 'curriculum.pdf', path: '', type: 'md', folder: 'src/assets' },
     { name: '.editorconfig', path: '', type: 'config', folder: 'root' },
     { name: '.gitignore', path: '', type: 'git', folder: 'root' },
     { name: 'angular.json', path: '', type: 'angular', folder: 'root' },
-    { name: 'package-lock.json', path: '', type: 'json', folder: 'root' },
     { name: 'package.json', path: '', type: 'json', folder: 'root' },
     { name: 'README.md', path: '', type: 'md', folder: 'root' },
-    { name: 'tsconfig.app.json', path: '', type: 'json', folder: 'root' },
-    { name: 'tsconfig.json', path: '', type: 'json', folder: 'root' },
-    { name: 'tsconfig.spec.json', path: '', type: 'json', folder: 'root' },
   ]);
 
-  private activeFilePath = signal<string>('about.component.ts');
+  private activeFilePath = signal<string>('home.sh');
 
   readonly files = computed(() => this.allFiles());
   readonly openFiles = computed(() => this.allFiles().filter((f) => f.isOpen));
@@ -167,10 +169,8 @@ export class NavigationService {
       })
     );
 
-    // Define el archivo .ts como el activo por defecto al cambiar de sección
-    const primaryFile = this.allFiles().find(
-      (f) => f.path === section && f.name.endsWith('.component.ts')
-    );
+    // Activa el archivo correspondiente a la sección
+    const primaryFile = this.allFiles().find((f) => f.path === section);
     if (primaryFile) {
       this.activeFilePath.set(primaryFile.name);
     }

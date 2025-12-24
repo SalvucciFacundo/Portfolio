@@ -135,26 +135,6 @@
             <router-outlet></router-outlet>
           </main>
         </section>
-
-        <section class="terminal desktop-only">
-          <div class="terminal-tabs">
-            <div class="terminal-tab active">TERMINAL</div>
-            <div class="terminal-tab">OUTPUT</div>
-            <div class="terminal-tab">DEBUG CONSOLE</div>
-          </div>
-          <div class="terminal-content" #terminalScroll>
-            @for (log of terminal.logs(); track $index) {
-            <div class="terminal-line">
-              @if (log.type === 'info') { <span class="info">[INFO]</span> } @else if (log.type ===
-              'success') { <span class="success">✓</span> }
-              {{ log.message }}
-            </div>
-            }
-            <div class="terminal-line animated-cursor">
-              Build successful. Watching for changes...
-            </div>
-          </div>
-        </section>
       </div>
 
       <!-- Right: Preview Area with VS Code Tab and Chrome Frame -->
@@ -175,20 +155,20 @@
             >
               <circle cx="12" cy="12" r="10" />
               <circle cx="12" cy="12" r="4" />
-              <line x1="12" y1="2" x2="12" y2="4" />
-              <line x1="12" y1="20" x2="12" y2="22" />
-              <line x1="2" y1="12" x2="4" y2="12" />
-              <line x1="20" y1="12" x2="22" y2="12" />
             </svg>
             <span>Live Preview</span>
           </div>
 
           <div
-            class="tab mobile-only"
+            class="tab"
             [class.active]="nav.viewMode() === 'code'"
             (click)="nav.viewMode.set('code')"
           >
-            <span class="file-icon-placeholder">{{ '{' }}{{ '}' }}</span>
+            <img
+              [src]="nav.getFileIcon(nav.activeFile()?.type || 'ts')"
+              class="tab-file-icon"
+              [alt]="nav.activeFile()?.type"
+            />
             <span>{{ nav.activeFile()?.name || 'Code' }}</span>
           </div>
         </header>
@@ -197,32 +177,7 @@
           <!-- Chrome-style Browser Frame -->
           <div class="chrome-browser">
             <header class="chrome-header">
-              <!-- Chrome Tabs Row -->
-              <div class="chrome-tabs">
-                <div class="chrome-tab active">
-                  <img
-                    src="https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/master/icons/angular.svg"
-                    alt=""
-                    class="chrome-favicon"
-                  />
-                  <span class="tab-title">Portfolio</span>
-                  <svg
-                    class="chrome-close"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M18 6 6 18M6 6l12 12" />
-                  </svg>
-                </div>
-                <div class="chrome-add-tab">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 5v14M5 12h14" />
-                  </svg>
-                </div>
-              </div>
-              <!-- Chrome Address Bar Row -->
+              <!-- Chrome Address Bar Row (Tabs removed) -->
               <nav class="chrome-nav">
                 <div class="nav-btns">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -303,6 +258,10 @@
                 class="preview-slider"
                 [style.transform]="'translateX(-' + nav.getSectionIndex() * 100 + '%)'"
               >
+                <div id="home-section" class="preview-section-wrapper">
+                  <app-home-preview></app-home-preview>
+                </div>
+
                 <div id="about-section" class="preview-section-wrapper">
                   @if (auth.currentUser()) {
                   <button class="edit-overlay-btn" (click)="modal.open('edit-profile')">
@@ -341,6 +300,40 @@
               </div>
             </main>
           </div>
+        </div>
+      </section>
+
+      <!-- Persistent Terminal -->
+      <section class="terminal" [class.minimized]="terminal.isMinimized()">
+        <div class="terminal-tabs">
+          <div class="terminal-tab-group">
+            <div class="terminal-tab active">TERMINAL</div>
+            <div class="terminal-tab">OUTPUT</div>
+            <div class="terminal-tab">DEBUG CONSOLE</div>
+          </div>
+          <div class="terminal-actions">
+            <button class="terminal-btn" (click)="terminal.toggleMinimize()">
+              @if (terminal.isMinimized()) {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m18 15-6-6-6 6" />
+              </svg>
+              } @else {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+              }
+            </button>
+          </div>
+        </div>
+        <div class="terminal-content" #terminalScroll>
+          @for (log of terminal.logs(); track $index) {
+          <div class="terminal-line">
+            @if (log.type === 'info') { <span class="info">[INFO]</span> } @else if (log.type ===
+            'success') { <span class="success">✓</span> }
+            {{ log.message }}
+          </div>
+          }
+          <div class="terminal-line animated-cursor">Build successful. Watching for changes...</div>
         </div>
       </section>
     </div>
