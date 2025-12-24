@@ -1,44 +1,66 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { PortfolioStateService } from '../../core/services/portfolio-state.service';
 
 @Component({
   selector: 'app-home',
   template: `
+    @if (state.profile(); as p) {
     <div class="code-container">
+      <div class="line"><span class="comment">#!/bin/bash</span></div>
+      <div class="line"></div>
+      <div class="line"><span class="comment"># Portfolio Boot Script</span></div>
       <div class="line">
-        <span class="keyword">import</span> {{ '{' }} Page {{ '}' }}
-        <span class="keyword">from</span> <span class="string">'@angular/core'</span>;
-      </div>
-      <div class="line">
-        <span class="keyword">import</span> {{ '{' }} Portfolio {{ '}' }}
-        <span class="keyword">from</span> <span class="string">'./core'</span>;
+        <span class="comment"># Owner: {{ p.name }}</span>
       </div>
       <div class="line"></div>
-      <div class="line"><span class="comment">/**</span></div>
-      <div class="line"><span class="comment"> * Welcome to the Portfolio Terminal</span></div>
-      <div class="line"><span class="comment"> * Starting the exploration journey...</span></div>
-      <div class="line"><span class="comment"> */</span></div>
       <div class="line">
-        <span class="keyword">export class</span> <span class="class-name">HomeComponent</span>
-        {{ '{' }}
+        <span class="keyword">NAME</span>=<span class="string">"{{ p.name }}"</span>
       </div>
       <div class="line">
-        <span class="keyword">readonly</span> title =
-        <span class="string">'Facundo Salvucci'</span>;
-      </div>
-      <div class="line">
-        <span class="keyword">readonly</span> stacks = [<span class="string">'Angular'</span>,
-        <span class="string">'TypeScript'</span>, <span class="string">'Firebase'</span>];
+        <span class="keyword">ROLE</span>=<span class="string">"{{ p.role }}"</span>
       </div>
       <div class="line"></div>
-      <div class="line"><span class="keyword">constructor</span>() {{ '{' }}</div>
+      <div class="line"><span class="function">identify_user</span>() {{ '{' }}</div>
       <div class="line">
-        <span class="class-name">console</span>.log(<span class="string"
-          >'Initializing Portfolio Engine...'</span
-        >);
+        <span class="keyword">echo</span> <span class="string">"Detecting operator..."</span>
+      </div>
+      <div class="line"><span class="keyword">sleep</span> 1</div>
+      <div class="line">
+        <span class="keyword">echo</span> <span class="string">"User: $NAME"</span>
       </div>
       <div class="line">{{ '}' }}</div>
+      <div class="line"></div>
+      <div class="line"><span class="function">init_system</span>() {{ '{' }}</div>
+      <div class="line">
+        <span class="keyword">echo</span> <span class="string">"Building portfolio assets..."</span>
+      </div>
+      <div class="line">
+        <span class="keyword">for</span> i <span class="keyword">in</span> {{ '{' }}1..100{{ '}' }};
+        <span class="keyword">do</span>
+      </div>
+      <div class="line">
+        <span class="keyword">printf</span> <span class="string">"\\rLoading: [%-25s] %d%%"</span>
+        <span class="string">"$(printf '█%.0s' $(seq 1 $((i/4))))"</span>
+        <span class="string">"$i"</span>
+      </div>
+      <div class="line"><span class="keyword">sleep</span> 0.05</div>
+      <div class="line"><span class="keyword">done</span></div>
+      <div class="line">
+        <span class="keyword">echo</span> -e
+        <span class="string">"\\nReady: Workspace initialized successfully."</span>
+      </div>
       <div class="line">{{ '}' }}</div>
+      <div class="line"></div>
+      <div class="line"><span class="comment"># Execute boot sequence</span></div>
+      <div class="line"><span class="function">identify_user</span></div>
+      <div class="line"><span class="function">init_system</span></div>
+      <div class="line"></div>
+      <div class="line">
+        <span class="keyword">echo</span>
+        <span class="string">"Welcome, $NAME. Scroll down to explore my work."</span>
+      </div>
     </div>
+    }
   `,
   styles: [
     `
@@ -50,9 +72,10 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
       }
       .line {
         min-height: 1.6em;
+        white-space: pre;
       }
       .keyword {
-        color: #569cd6;
+        color: #c586c0; /* Bash variable/keyword */
       }
       .string {
         color: #ce9178;
@@ -61,11 +84,14 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
         color: #6a9955;
         font-style: italic;
       }
-      .class-name {
-        color: #4ec9b0;
+      .function {
+        color: #dcdcaa; /* Function color */
       }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
-export class HomeComponent {}
+export class HomeComponent {
+  protected state = inject(PortfolioStateService);
+}

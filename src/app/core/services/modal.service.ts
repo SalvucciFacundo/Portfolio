@@ -3,6 +3,7 @@ import { Injectable, signal } from '@angular/core';
 export type ModalType =
   | 'login'
   | 'edit-profile'
+  | 'edit-home'
   | 'edit-skills'
   | 'edit-projects'
   | 'edit-contact'

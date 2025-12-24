@@ -15,7 +15,7 @@ export class TerminalService {
     { type: 'info', message: 'Hot reload enabled' },
   ]);
 
-  isMinimized = signal(false);
+  isMinimized = signal(true);
 
   readonly logs = this.logsSignal.asReadonly();
 

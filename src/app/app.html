@@ -1,5 +1,6 @@
 <div
   class="ide-container"
+  (click)="isSettingsOpen.set(false)"
   [class.light-theme]="!theme.isDark()"
   [class.sidebar-hidden]="!nav.isSidebarVisible()"
   [class.preview-focused]="nav.viewMode() === 'preview'"
@@ -106,13 +107,65 @@
           </svg>
         </div>
         }
-        <div class="action-item">
+        <div
+          class="action-item"
+          [class.active]="isSettingsOpen()"
+          (click)="toggleSettings($event)"
+          title="Settings"
+        >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="3" />
             <path
               d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"
             />
           </svg>
+
+          <!-- Settings Submenu Overlay -->
+          @if (isSettingsOpen() && auth.currentUser()) {
+          <div class="settings-menu" (click)="$event.stopPropagation()">
+            <div class="menu-item" (click)="modal.open('edit-home'); isSettingsOpen.set(false)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+              <span>Edit Home (Identity)</span>
+            </div>
+            <div class="menu-item" (click)="modal.open('edit-profile'); isSettingsOpen.set(false)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              <span>Edit Full Profile</span>
+            </div>
+            <div class="menu-item" (click)="modal.open('edit-skills'); isSettingsOpen.set(false)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                  d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                />
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                <line x1="12" y1="22.08" x2="12" y2="12" />
+              </svg>
+              <span>Edit Skills</span>
+            </div>
+            <div class="menu-item" (click)="modal.open('edit-projects'); isSettingsOpen.set(false)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                  d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+                />
+              </svg>
+              <span>Edit Projects</span>
+            </div>
+            <div class="menu-item" (click)="modal.open('edit-contact'); isSettingsOpen.set(false)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+              <span>Edit Contact Info</span>
+            </div>
+          </div>
+          }
         </div>
       </div>
     </aside>
@@ -125,7 +178,6 @@
       <!-- Left: Code & Terminal -->
       <div class="code-zone">
         <section class="editor-shell">
-          <app-tabs-bar></app-tabs-bar>
           @if (nav.activeFile(); as file) {
           <div class="breadcrumb">
             <span>portfolio</span> > <span>{{ file.name }}</span>
@@ -251,38 +303,18 @@
                 </div>
 
                 <div id="about-section" class="preview-section-wrapper">
-                  @if (auth.currentUser()) {
-                  <button class="edit-overlay-btn" (click)="modal.open('edit-profile')">
-                    Edit Profile
-                  </button>
-                  }
                   <app-about-preview></app-about-preview>
                 </div>
 
                 <div id="skills-section" class="preview-section-wrapper">
-                  @if (auth.currentUser()) {
-                  <button class="edit-overlay-btn" (click)="modal.open('edit-skills')">
-                    Edit Skills
-                  </button>
-                  }
                   <app-skills-preview></app-skills-preview>
                 </div>
 
                 <div id="projects-section" class="preview-section-wrapper">
-                  @if (auth.currentUser()) {
-                  <button class="edit-overlay-btn" (click)="modal.open('edit-projects')">
-                    Edit Projects
-                  </button>
-                  }
                   <app-projects-preview></app-projects-preview>
                 </div>
 
                 <div id="contact-section" class="preview-section-wrapper">
-                  @if (auth.currentUser()) {
-                  <button class="edit-overlay-btn" (click)="modal.open('edit-contact')">
-                    Edit Contact
-                  </button>
-                  }
                   <app-contact-preview></app-contact-preview>
                 </div>
               </div>

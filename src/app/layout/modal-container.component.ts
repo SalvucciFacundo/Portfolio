@@ -26,6 +26,20 @@ import { Profile } from '../core/models/portfolio.model';
       </div>
       }
 
+      <!-- Edit Home (New) -->
+      @if (type === 'edit-home') {
+      <div class="form-group">
+        <p class="hint">// Modify terminal identity</p>
+        <label>Operator Name</label>
+        <input [(ngModel)]="profileBuffer().name" placeholder="Tu Nombre" />
+
+        <label>Operator Role</label>
+        <input [(ngModel)]="profileBuffer().role" placeholder="Tu Rol" />
+
+        <button class="primary-btn" (click)="saveProfile(profileBuffer())">Update Identity</button>
+      </div>
+      }
+
       <!-- Edit Profile -->
       @if (type === 'edit-profile') {
       <div class="form-group">
@@ -473,6 +487,7 @@ export class ModalContainerComponent {
     const titles: Record<string, string> = {
       login: 'Autenticación de Administrador',
       'edit-profile': 'Editar Perfil Profesional',
+      'edit-home': 'Identidad del Sistema (Home)',
       'edit-skills': 'Gestionar Habilidades',
       'edit-projects': 'Administrar Proyectos',
       'edit-contact': 'Configurar Sección de Contacto',

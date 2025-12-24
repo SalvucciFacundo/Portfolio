@@ -2,13 +2,14 @@ import {
   Component,
   ChangeDetectionStrategy,
   inject,
+  signal,
   effect,
   viewChild,
   ElementRef,
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from './layout/sidebar.component';
-import { TabsBarComponent } from './layout/tabs-bar.component';
+
 import { NavigationService } from './core/services/navigation.service';
 import { TerminalService } from './core/services/terminal.service';
 import { ThemeService } from './core/services/theme.service';
@@ -27,7 +28,7 @@ import { AuthService } from './core/auth/auth.service';
   imports: [
     RouterOutlet,
     SidebarComponent,
-    TabsBarComponent,
+
     HomePreviewComponent,
     AboutPreviewComponent,
     SkillsPreviewComponent,
@@ -47,6 +48,13 @@ export class App {
   protected readonly modal = inject(ModalService);
   protected readonly auth = inject(AuthService);
   private terminalScroll = viewChild<ElementRef>('terminalScroll');
+
+  isSettingsOpen = signal(false);
+
+  toggleSettings(event: Event) {
+    event.stopPropagation();
+    this.isSettingsOpen.update((open) => !open);
+  }
 
   private lastScrollTime = 0;
   private readonly scrollDebounce = 1000;

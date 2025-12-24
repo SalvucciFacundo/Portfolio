@@ -1,4 +1,5 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 export interface FileEntry {
   name: string;
@@ -12,6 +13,7 @@ export interface FileEntry {
   providedIn: 'root',
 })
 export class NavigationService {
+  private router = inject(Router);
   isSidebarVisible = signal(typeof window !== 'undefined' ? window.innerWidth > 992 : true);
   viewMode = signal<'code' | 'preview'>('preview');
   scrollToRequest = signal<string | null>(null);
@@ -124,6 +126,9 @@ export class NavigationService {
       })
     );
     this.activeFilePath.set(fileName);
+    if (targetFile.path) {
+      this.router.navigate([targetFile.path]);
+    }
 
     // Only switch to code view if explicitly requested
     if (switchView && window.innerWidth <= 768) {
@@ -141,7 +146,9 @@ export class NavigationService {
     if (remainingOpen.length === 0) {
       this.openFile('about.component.ts');
     } else if (this.activeFilePath() === fileName) {
-      this.activeFilePath.set(remainingOpen[remainingOpen.length - 1].name);
+      const nextFile = remainingOpen[remainingOpen.length - 1];
+      this.activeFilePath.set(nextFile.name);
+      if (nextFile.path) this.router.navigate([nextFile.path]);
     }
   }
 
@@ -185,6 +192,7 @@ export class NavigationService {
     const primaryFile = this.allFiles().find((f) => f.path === section);
     if (primaryFile) {
       this.activeFilePath.set(primaryFile.name);
+      this.router.navigate([primaryFile.path]);
     }
   }
 
