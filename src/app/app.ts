@@ -48,6 +48,9 @@ export class App {
   protected readonly auth = inject(AuthService);
   private terminalScroll = viewChild<ElementRef>('terminalScroll');
 
+  private lastScrollTime = 0;
+  private readonly scrollDebounce = 1000;
+
   constructor() {
     effect(() => {
       // Auto-scroll terminal
@@ -57,5 +60,19 @@ export class App {
         setTimeout(() => (el.scrollTop = el.scrollHeight), 0);
       }
     });
+  }
+
+  handleWheel(event: WheelEvent) {
+    const now = Date.now();
+    if (now - this.lastScrollTime < this.scrollDebounce) return;
+
+    if (Math.abs(event.deltaY) > 30) {
+      if (event.deltaY > 0) {
+        this.nav.nextSection();
+      } else {
+        this.nav.prevSection();
+      }
+      this.lastScrollTime = now;
+    }
   }
 }

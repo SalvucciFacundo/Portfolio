@@ -268,7 +268,7 @@ import { CommonModule } from '@angular/common';
 export class SidebarComponent {
   protected readonly nav = inject(NavigationService);
 
-  private readonly ICO_PATH = '/assets/material-icons';
+  private readonly ICO_PATH = 'assets/material-icons';
 
   getFilesForFolder(folder: string) {
     return this.nav.files().filter((f) => f.folder === folder);

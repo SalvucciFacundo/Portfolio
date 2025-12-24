@@ -16,30 +16,42 @@ export class NavigationService {
   viewMode = signal<'code' | 'preview'>('preview');
   scrollToRequest = signal<string | null>(null);
 
-  getFileIcon(type: string): string {
-    const base = 'https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/master/icons';
-    switch (type) {
-      case 'ts':
-        return `${base}/typescript.svg`;
-      case 'html':
-        return `${base}/html.svg`;
-      case 'scss':
-        return `${base}/sass.svg`;
-      case 'json':
-        return `${base}/json.svg`;
-      case 'md':
-        return `${base}/markdown.svg`;
-      case 'angular':
-        return `${base}/angular.svg`;
-      case 'config':
-        return `${base}/editorconfig.svg`;
-      case 'shell':
-        return `${base}/console.svg`;
-      case 'routing':
-        return `${base}/routing.svg`;
-      default:
-        return `${base}/file.svg`;
+  getFileIcon(type: string, fileName?: string): string {
+    const base = 'assets/material-icons';
+    let icon = '';
+
+    // Special cases based on file name (Sync with sidebar logic)
+    if (fileName) {
+      if (fileName.includes('.service.')) {
+        icon = 'angular-service.clone.svg';
+      } else if (fileName.includes('.component.')) {
+        icon = 'angular-component.clone.svg';
+      } else if (fileName === 'README.md') {
+        icon = 'readme.svg';
+      } else if (fileName === 'package.json' || fileName === 'package-lock.json') {
+        icon = 'nodejs.svg';
+      } else if (fileName.includes('tsconfig')) {
+        icon = 'tsconfig.svg';
+      }
     }
+
+    if (!icon) {
+      const mapping: Record<string, string> = {
+        ts: 'typescript.svg',
+        html: 'html.svg',
+        scss: 'sass.svg',
+        md: 'markdown.svg',
+        json: 'json.svg',
+        config: 'editorconfig.svg',
+        git: 'git.svg',
+        angular: 'angular.svg',
+        shell: 'console.svg',
+        routing: 'routing.svg',
+      };
+      icon = mapping[type] || 'file.svg';
+    }
+
+    return `${base}/${icon}`;
   }
 
   // Section-based navigation for horizontal preview
