@@ -47,14 +47,47 @@ import { Profile } from '../core/models/portfolio.model';
 
         <div class="modal-section preview-compact">
           <h4><span class="ln">#</span> Visual & Location</h4>
-          <div class="field">
-            <label>Avatar / Image URL</label>
-            <input
-              [(ngModel)]="profileBuffer().avatarUrl"
-              placeholder="https://url-de-tu-foto.jpg"
-            />
-            <p class="hint small">Leave empty for FA (Facundo) avatar</p>
+          <div class="avatar-edit-layout">
+            <div class="avatar-preview-box">
+              @if (profileBuffer().avatarUrl) {
+              <img [src]="profileBuffer().avatarUrl" alt="Preview" class="preview-img" />
+              } @else {
+              <div class="preview-placeholder">
+                {{ (profileBuffer().name || 'FA').substring(0, 2).toUpperCase() }}
+              </div>
+              }
+              <div class="status-dot"></div>
+            </div>
+
+            <div class="avatar-upload-field">
+              <div class="field">
+                <label>Avatar Image</label>
+                <div class="upload-controls">
+                  <input
+                    type="file"
+                    #fileInput
+                    (change)="handleAvatarUpload($event)"
+                    accept="image/*"
+                    hidden
+                  />
+                  <button
+                    class="secondary-btn upload-btn"
+                    [disabled]="isUploadingAvatar()"
+                    (click)="fileInput.click()"
+                  >
+                    {{ isUploadingAvatar() ? 'UPLOADING...' : 'CHANGE PHOTO' }}
+                  </button>
+                  @if (profileBuffer().avatarUrl) {
+                  <button class="icon-danger-btn small" (click)="profileBuffer().avatarUrl = ''">
+                    CLEAR
+                  </button>
+                  }
+                </div>
+                <p class="hint small">Upload to Firebase Storage or leave empty for default</p>
+              </div>
+            </div>
           </div>
+
           <div class="input-row">
             <div class="field">
               <label>Location</label>
@@ -412,6 +445,79 @@ import { Profile } from '../core/models/portfolio.model';
         }
       }
 
+      .avatar-edit-layout {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.02);
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.03);
+      }
+
+      .avatar-preview-box {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        padding: 4px;
+        border: 2px solid #007acc;
+        flex-shrink: 0;
+
+        .preview-img {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+
+        .preview-placeholder {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          background: #1e1e1e;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 24px;
+          color: #007acc;
+          font-weight: bold;
+        }
+
+        .status-dot {
+          position: absolute;
+          bottom: 5px;
+          right: 5px;
+          width: 12px;
+          height: 12px;
+          background: #3fb950;
+          border: 2px solid #1e1e1e;
+          border-radius: 50%;
+        }
+      }
+
+      .avatar-upload-field {
+        flex: 1;
+      }
+
+      .upload-controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 5px;
+        .upload-btn {
+          flex: 1;
+          font-size: 11px;
+          padding: 8px;
+          text-transform: uppercase;
+        }
+        .icon-danger-btn.small {
+          padding: 8px;
+          font-size: 10px;
+          color: #ff5555;
+        }
+      }
+
       .footer-row {
         display: flex;
         justify-content: space-between;
@@ -565,6 +671,7 @@ export class ModalContainerComponent {
 
   loginEmail = '';
   loginPass = '';
+  isUploadingAvatar = signal(false);
 
   // Local buffer for profile
   profileBuffer = signal<Profile>({
@@ -796,5 +903,27 @@ export class ModalContainerComponent {
       ...p,
       certifications: certs,
     }));
+  }
+
+  async handleAvatarUpload(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    const file = input.files[0];
+    this.isUploadingAvatar.set(true);
+    this.terminal.log(`> [STORAGE] Iniciando subida de avatar: ${file.name}...`, 'info');
+
+    try {
+      const path = `profiles/avatar_${Date.now()}_${file.name}`;
+      const url = await this.dataService.uploadFile(path, file);
+
+      this.profileBuffer.update((p) => ({ ...p, avatarUrl: url }));
+      this.terminal.log(`> [STORAGE] Avatar subido correctamente.`, 'success');
+    } catch (e: any) {
+      this.terminal.log(`> [ERROR] Fallo al subir imagen: ${e.message || e}`, 'error');
+    } finally {
+      this.isUploadingAvatar.set(false);
+      input.value = ''; // Reset input
+    }
   }
 }

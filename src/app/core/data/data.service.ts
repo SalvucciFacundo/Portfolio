@@ -18,12 +18,21 @@ import {
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Project } from '../models/portfolio.model';
+import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DataService {
   private firestore = inject(Firestore);
+  private storage = inject(Storage);
+
+  // Upload file to Firebase Storage
+  async uploadFile(path: string, file: File): Promise<string> {
+    const storageRef = ref(this.storage, path);
+    const snapshot = await uploadBytes(storageRef, file);
+    return getDownloadURL(snapshot.ref);
+  }
 
   // Generic method to get all documents from a collection as real-time stream
   getCollection<T>(path: string): Observable<T[]> {
