@@ -22,6 +22,7 @@ import { CommonModule } from '@angular/common';
 import { ModalService } from './core/services/modal.service';
 import { ModalContainerComponent } from './layout/modal-container.component';
 import { AuthService } from './core/auth/auth.service';
+import { ToastComponent } from './shared/components/toast.component';
 
 @Component({
   selector: 'app-root',
@@ -36,6 +37,7 @@ import { AuthService } from './core/auth/auth.service';
     ContactPreviewComponent,
     CommonModule,
     ModalContainerComponent,
+    ToastComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',

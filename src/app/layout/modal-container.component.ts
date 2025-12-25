@@ -8,6 +8,7 @@ import { DataService } from '../core/data/data.service';
 import { AuthService } from '../core/auth/auth.service';
 import { ModalComponent } from '../shared/components/modal.component';
 import { Profile } from '../core/models/portfolio.model';
+import { ToastService } from '../core/services/toast.service';
 
 @Component({
   selector: 'app-modal-container',
@@ -195,49 +196,72 @@ import { Profile } from '../core/models/portfolio.model';
 
       <!-- Edit Skills -->
       @if (type === 'edit-skills') {
-      <div class="form-group">
-        <p class="hint">// Manage your skill categories and specific items</p>
+      <div class="form-group modal-scrollable">
+        <p class="hint">// Orchestrate your technical arsenal</p>
+
         <div class="skills-management-list">
           @for (group of state.skills(); track group.id) {
-          <div class="skill-group-card">
+          <div class="skill-group-section">
             <div class="skill-group-header">
-              <input [(ngModel)]="group.category" placeholder="Category Name" />
-              <button class="icon-danger-btn" (click)="deleteSkillGroup(group.id!)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path
-                    d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-                  />
-                </svg>
-              </button>
+              <div class="field-stack">
+                <label>Category Label</label>
+                <div class="header-inputs">
+                  <input [(ngModel)]="group.category" placeholder="Ej: Frontend" />
+                  <button
+                    class="icon-danger-btn"
+                    (click)="deleteSkillGroup(group.id!)"
+                    title="Destroy Category"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path
+                        d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
 
-            <div class="skill-items-grid">
+            <label>Active Modules (Skills)</label>
+            <div class="skill-pills-container">
               @for (item of group.items; track $index) {
               <div class="skill-pill-edit">
+                <i [class]="getIconClass(item)"></i>
                 <span>{{ item }}</span>
-                <button (click)="removeItemFromGroup(group, $index)">×</button>
+                <button (click)="removeItemFromGroup(group, $index)" title="Remove">×</button>
               </div>
+              } @empty {
+              <p class="hint small">No skills in this category</p>
               }
             </div>
 
             <div class="add-item-row">
               <input
                 #newItemInput
-                placeholder="Add skill..."
+                placeholder="New module name (Ej: Angular)..."
                 (keyup.enter)="addItemToGroup(group, newItemInput.value); newItemInput.value = ''"
               />
-              <button class="save-icon-btn" (click)="saveSkillGroup(group)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-                  <polyline points="17 21 17 13 7 13 7 21" />
-                  <polyline points="7 3 7 8 15 8" />
-                </svg>
+              <button
+                class="secondary-btn small-btn"
+                (click)="addItemToGroup(group, newItemInput.value); newItemInput.value = ''"
+              >
+                ADD
+              </button>
+              <button
+                class="save-icon-btn action-btn-blue"
+                (click)="saveSkillGroup(group)"
+                title="Sync with Firestore"
+              >
+                SAVE CATEGORY
               </button>
             </div>
           </div>
           }
         </div>
-        <button class="add-btn" (click)="addNewSkillGroup()">+ New Category</button>
+
+        <button class="add-btn primary-btn" (click)="addNewSkillGroup()">
+          + INITIALIZE NEW CATEGORY
+        </button>
       </div>
       }
 
@@ -320,6 +344,24 @@ import { Profile } from '../core/models/portfolio.model';
         <button class="primary-btn" (click)="saveContact()">Save Contact Text</button>
       </div>
       }
+
+      <!-- Custom Confirm Dialog -->
+      @if (type === 'confirm') {
+
+      <div class="confirm-modal">
+        @let c = modal.confirmData(); @if (c) {
+        <p class="confirm-message">{{ c.message }}</p>
+        <div class="confirm-actions">
+          <button class="secondary-btn" (click)="modal.close()">
+            {{ c.cancelText || 'CANCEL' }}
+          </button>
+          <button class="primary-btn danger-btn" (click)="c.onConfirm(); modal.close()">
+            {{ c.confirmText || 'EXECUTE' }}
+          </button>
+        </div>
+        }
+      </div>
+      }
     </app-modal>
     }
   `,
@@ -351,50 +393,82 @@ import { Profile } from '../core/models/portfolio.model';
       .skills-management-list {
         display: flex;
         flex-direction: column;
-        gap: 15px;
-        max-height: 400px;
+        gap: 20px;
+        max-height: 500px;
         overflow-y: auto;
-        padding-right: 5px;
+        padding-right: 10px;
       }
 
-      .skill-group-card {
-        padding: 12px;
-        background: #2d2d2d;
-        border-radius: 6px;
-        border-left: 3px solid #007acc;
-      }
+      .skill-group-section {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 15px;
 
-      .skill-group-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-        input {
-          font-weight: bold;
-          flex: 1;
-          margin-right: 10px;
+        label {
+          font-size: 10px;
+          text-transform: uppercase;
+          color: #58a6ff;
+          letter-spacing: 1px;
+          margin-bottom: 8px;
+          display: block;
         }
+      }
+
+      .header-inputs {
+        display: flex;
+        gap: 10px;
+        input {
+          flex: 1;
+          font-weight: bold;
+          font-size: 14px;
+        }
+      }
+
+      .skill-pills-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 15px;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
       }
 
       .skill-pill-edit {
         display: inline-flex;
         align-items: center;
-        background: #3c3c3c;
-        padding: 2px 8px;
-        border-radius: 4px;
-        margin: 2px;
+        gap: 8px;
+        background: #1e1e1e;
+        border: 1px solid #333;
+        padding: 5px 10px;
+        border-radius: 20px;
         font-size: 11px;
+        color: #c9d1d9;
+        transition: all 0.2s;
+
+        i {
+          font-size: 14px;
+          color: #58a6ff;
+        }
+
         button {
           background: none;
           border: none;
-          color: #ff5555;
-          margin-left: 5px;
+          color: #f85149;
           cursor: pointer;
-          font-weight: bold;
+          font-size: 16px;
+          padding: 0;
+          line-height: 1;
+          &:hover {
+            color: #ff7b72;
+          }
         }
-      }
 
-      .skill-items-grid {
-        margin-bottom: 10px;
+        &:hover {
+          border-color: #58a6ff;
+          background: rgba(88, 166, 255, 0.05);
+        }
       }
 
       .add-item-row {
@@ -402,7 +476,27 @@ import { Profile } from '../core/models/portfolio.model';
         gap: 8px;
         input {
           flex: 1;
+          background: #0d1117;
         }
+      }
+
+      .action-btn-blue {
+        padding: 0 15px;
+        background: #238636;
+        color: white;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: bold;
+        &:hover {
+          background: #2ea043;
+        }
+      }
+
+      .small-btn {
+        padding: 0 10px;
+        height: 32px;
+        font-size: 10px;
+        border-radius: 4px;
       }
 
       .skills-management-list::-webkit-scrollbar {
@@ -515,6 +609,38 @@ import { Profile } from '../core/models/portfolio.model';
           padding: 8px;
           font-size: 10px;
           color: #ff5555;
+        }
+      }
+
+      .confirm-modal {
+        text-align: center;
+        padding: 20px 10px;
+        .confirm-message {
+          font-size: 14px;
+          color: #8b949e;
+          margin-bottom: 25px;
+          line-height: 1.6;
+        }
+        .confirm-actions {
+          display: flex;
+          gap: 12px;
+          justify-content: center;
+          button {
+            padding: 10px 20px;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+          }
+        }
+      }
+
+      .danger-btn {
+        background: #da3633 !important;
+        color: white;
+        border-color: #f85149 !important;
+        &:hover {
+          background: #f85149 !important;
         }
       }
 
@@ -668,6 +794,7 @@ export class ModalContainerComponent {
   private terminal = inject(TerminalService);
   private dataService = inject(DataService);
   private auth = inject(AuthService);
+  private toast = inject(ToastService);
 
   loginEmail = '';
   loginPass = '';
@@ -735,6 +862,7 @@ export class ModalContainerComponent {
       'edit-skills': 'Gestionar Habilidades',
       'edit-projects': 'Administrar Proyectos',
       'edit-contact': 'Configurar Sección de Contacto',
+      confirm: 'Confirmar Acción',
     };
     return titles[type] || 'Dialog';
   }
@@ -742,9 +870,11 @@ export class ModalContainerComponent {
   async doLogin() {
     try {
       await this.auth.login(this.loginEmail, this.loginPass);
+      this.toast.show('Bienvenido, Facundo', 'success');
       this.terminal.log(`> Login successful for: ${this.loginEmail}`, 'success');
       this.modal.close();
     } catch (e) {
+      this.toast.show('Credenciales inválidas', 'error');
       this.terminal.log(`> Login failed: Invalid credentials`, 'error');
     }
   }
@@ -752,28 +882,34 @@ export class ModalContainerComponent {
   async saveProfile(p: any) {
     if (!p) return;
     if (!p.name?.trim()) {
+      this.toast.show('El nombre es obligatorio', 'error');
       this.terminal.log(`> [VALIDACIÓN] El nombre es obligatorio`, 'error');
       return;
     }
     try {
       await this.dataService.save('about', 'profile', p);
+      this.toast.show('Perfil actualizado', 'success');
       this.terminal.log(`> [COMPILADO] Información de perfil actualizada en Firestore`, 'success');
       this.modal.close();
     } catch (e: any) {
+      this.toast.show('Error al guardar perfil', 'error');
       this.terminal.log(`> [ERROR] Error al guardar perfil: ${e.message || e}`, 'error');
     }
   }
 
   async saveContact() {
     if (!this.contactBuffer().title?.trim()) {
+      this.toast.show('El título es obligatorio', 'error');
       this.terminal.log(`> [VALIDACIÓN] El título de contacto es obligatorio`, 'error');
       return;
     }
     try {
       await this.dataService.save('about', 'contact', this.contactBuffer());
+      this.toast.show('Contacto actualizado', 'success');
       this.terminal.log(`> [SYNC] Información de contacto actualizada`, 'success');
       this.modal.close();
     } catch (e: any) {
+      this.toast.show('Error al guardar contacto', 'error');
       this.terminal.log(`> [ERROR] Error al guardar contacto: ${e.message || e}`, 'error');
     }
   }
@@ -782,8 +918,10 @@ export class ModalContainerComponent {
     if (!group || !group.id) return;
     try {
       await this.dataService.update('skills', group.id, group);
+      this.toast.show(`Categoría "${group.category}" sincronizada`, 'success');
       this.terminal.log(`> [SYNC] Categoría "${group.category}" sincronizada`, 'info');
     } catch (e) {
+      this.toast.show('Error al sincronizar skills', 'error');
       this.terminal.log(`> [ERROR] Error al sincronizar skills`, 'error');
     }
   }
@@ -791,28 +929,42 @@ export class ModalContainerComponent {
   addItemToGroup(group: any, value: string) {
     if (!value.trim()) return;
     group.items = [...group.items, value.trim()];
+    this.toast.show(`Skill "${value}" agregado localmente`, 'info');
   }
 
   removeItemFromGroup(group: any, index: number) {
-    group.items.splice(index, 1);
+    const removedItem = group.items[index];
+    group.items = group.items.filter((_: any, i: number) => i !== index);
+    this.toast.show(`Removed "${removedItem}"`, 'info');
   }
 
-  async deleteSkillGroup(id: string) {
-    if (!confirm('¿Seguro que quieres eliminar esta categoría de habilidades?')) return;
-    try {
-      await this.dataService.delete('skills', id);
-      this.terminal.log(`> [FS] Categoría eliminada: ${id}`, 'success');
-    } catch (e) {
-      this.terminal.log(`> [ERROR] Error al eliminar categoría`, 'error');
-    }
+  deleteSkillGroup(id: string) {
+    this.modal.confirm({
+      title: 'Eliminar Categoría',
+      message:
+        '¿Estás seguro de que deseas eliminar esta categoría de habilidades? Se perderán todos los datos contenidos.',
+      confirmText: 'SÍ, ELIMINAR',
+      onConfirm: async () => {
+        try {
+          await this.dataService.delete('skills', id);
+          this.toast.show('Categoría eliminada', 'info');
+          this.terminal.log(`> [FS] Categoría eliminada: ${id}`, 'success');
+        } catch (e: any) {
+          this.toast.show('Error al eliminar', 'error');
+          this.terminal.log(`> [ERROR] Error al eliminar categoría: ${e.message}`, 'error');
+        }
+      },
+    });
   }
 
   async saveProject(p: any) {
     if (!p || !p.id) return;
     try {
       await this.dataService.update('projects', p.id, p);
+      this.toast.show(`Proyecto "${p.title}" actualizado`, 'success');
       this.terminal.log(`> [DEPLOY] Proyecto "${p.title}" actualizado con éxito`, 'success');
     } catch (e) {
+      this.toast.show('Error al actualizar proyecto', 'error');
       this.terminal.log(`> [ERROR] Error al actualizar proyecto`, 'error');
     }
   }
@@ -824,14 +976,22 @@ export class ModalContainerComponent {
       .filter((t) => !!t);
   }
 
-  async deleteProject(id: string) {
-    if (!confirm('¿Seguro que quieres eliminar este proyecto?')) return;
-    try {
-      await this.dataService.delete('projects', id);
-      this.terminal.log(`> [FS] Proyecto eliminado: ${id}`, 'success');
-    } catch (e) {
-      this.terminal.log(`> [ERROR] Error al eliminar proyecto`, 'error');
-    }
+  deleteProject(id: string) {
+    this.modal.confirm({
+      title: 'Destruir Registro',
+      message: '¿Estás seguro de eliminar este proyecto del sistema? Esta acción es irreversible.',
+      confirmText: 'DESTRUIR PROYECTO',
+      onConfirm: async () => {
+        try {
+          await this.dataService.delete('projects', id);
+          this.toast.show('Proyecto eliminado', 'info');
+          this.terminal.log(`> [FS] Proyecto eliminado: ${id}`, 'success');
+        } catch (e) {
+          this.toast.show('Error al eliminar', 'error');
+          this.terminal.log(`> [ERROR] Error al eliminar proyecto`, 'error');
+        }
+      },
+    });
   }
 
   async addNewProject() {
@@ -847,8 +1007,10 @@ export class ModalContainerComponent {
     const id = Date.now().toString();
     try {
       await this.dataService.save('projects', id, newP);
+      this.toast.show('Proyecto creado', 'success');
       this.terminal.log(`> [FS] Creado nuevo registro de proyecto: ${id}`, 'success');
     } catch (e) {
+      this.toast.show('Error al crear proyecto', 'error');
       this.terminal.log(`> [ERROR] Error al crear proyecto`, 'error');
     }
   }
@@ -861,8 +1023,10 @@ export class ModalContainerComponent {
     const id = Date.now().toString();
     try {
       await this.dataService.save('skills', id, newGroup);
+      this.toast.show('Nueva categoría creada', 'success');
       this.terminal.log(`> [FS] Nueva sección de habilidades creada: ${id}`, 'success');
     } catch (e) {
+      this.toast.show('Error al crear categoría', 'error');
       this.terminal.log(`> [ERROR] Error al crear categoría`, 'error');
     }
   }
@@ -925,5 +1089,31 @@ export class ModalContainerComponent {
       this.isUploadingAvatar.set(false);
       input.value = ''; // Reset input
     }
+  }
+
+  getIconClass(name: string): string {
+    const n = name.toLowerCase();
+    if (n.includes('angular')) return 'devicon-angularjs-plain';
+    if (n.includes('react')) return 'devicon-react-original';
+    if (n.includes('typescript')) return 'devicon-typescript-plain';
+    if (n.includes('javascript')) return 'devicon-javascript-plain';
+    if (n.includes('firebase')) return 'devicon-firebase-plain';
+    if (n.includes('node')) return 'devicon-nodejs-plain';
+    if (n.includes('css')) return 'devicon-css3-plain';
+    if (n.includes('html')) return 'devicon-html5-plain';
+    if (n.includes('sass') || n.includes('scss')) return 'devicon-sass-original';
+    if (n.includes('git')) return 'devicon-git-plain';
+    if (n.includes('docker')) return 'devicon-docker-plain';
+    if (n.includes('python')) return 'devicon-python-plain';
+    if (n.includes('java') && !n.includes('script')) return 'devicon-java-plain';
+    if (n.includes('c#')) return 'devicon-csharp-plain';
+    if (n.includes('linux')) return 'devicon-linux-plain';
+    if (n.includes('tailwind')) return 'devicon-tailwindcss-original';
+    if (n.includes('figma')) return 'devicon-figma-plain';
+    if (n.includes('photoshop')) return 'devicon-photoshop-plain';
+    if (n.includes('mongo')) return 'devicon-mongodb-plain';
+    if (n.includes('sql')) return 'devicon-sqlite-plain';
+    if (n.includes('unity')) return 'devicon-unity-original';
+    return 'devicon-code-plain';
   }
 }
