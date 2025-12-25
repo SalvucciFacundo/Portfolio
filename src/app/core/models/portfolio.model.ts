@@ -14,6 +14,7 @@ export interface Profile {
   languages?: { name: string; level: string }[];
   softSkills?: string[];
   avatarUrl?: string;
+  certifications?: string[];
   socials: {
     github?: string;
     linkedin?: string;

@@ -72,6 +72,18 @@ import { CommonModule } from '@angular/common';
               </div>
             </div>
           </div>
+          } @if (p.certifications && p.certifications.length) {
+          <div class="readme-section">
+            <h2 class="readme-subtitle">## Certifications & Courses</h2>
+            <div class="cert-grid">
+              @for (cert of p.certifications; track cert) {
+              <div class="cert-item">
+                <span class="cert-icon">📜</span>
+                <span class="cert-name">{{ cert }}</span>
+              </div>
+              }
+            </div>
+          </div>
           }
 
           <div class="grid-sections">
@@ -94,17 +106,6 @@ import { CommonModule } from '@angular/common';
                 @for (skill of p.softSkills; track skill) {
                 <span class="skill-badge">{{ skill }}</span>
                 }
-              </div>
-            </div>
-            } @else {
-            <!-- Default soft skills for demonstration if empty -->
-            <div class="readme-section">
-              <h2 class="readme-subtitle">## Soft Skills</h2>
-              <div class="badge-cloud">
-                <span class="skill-badge">Autogestión</span>
-                <span class="skill-badge">Comunicación Asertiva</span>
-                <span class="skill-badge">Resolución de Problemas</span>
-                <span class="skill-badge">Trabajo en Equipo</span>
               </div>
             </div>
             }
@@ -371,6 +372,28 @@ import { CommonModule } from '@angular/common';
         padding: 4px 10px;
         border-radius: 4px;
         border: 1px solid rgba(56, 139, 253, 0.2);
+      }
+
+      .cert-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 12px;
+      }
+
+      .cert-item {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 10px 12px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        color: #c9d1d9;
+
+        .cert-icon {
+          opacity: 0.6;
+        }
       }
 
       .loading-dashboard {

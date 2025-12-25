@@ -42,98 +42,120 @@ import { Profile } from '../core/models/portfolio.model';
 
       <!-- Edit Profile -->
       @if (type === 'edit-profile') {
-      <div class="form-group">
+      <div class="form-group modal-scrollable">
         @let p = state.profile();
-        <label>Name</label>
-        <input [(ngModel)]="profileBuffer().name" placeholder="Tu Nombre" />
 
-        <label>Role</label>
-        <input [(ngModel)]="profileBuffer().role" placeholder="Tu Rol" />
-
-        <label>Status</label>
-        <input [(ngModel)]="profileBuffer().status" placeholder="Ej: Open to Work" />
-
-        <div class="education-grid">
-          <div>
-            <label>Degree</label>
+        <div class="modal-section preview-compact">
+          <h4><span class="ln">#</span> Visual & Location</h4>
+          <div class="field">
+            <label>Avatar / Image URL</label>
             <input
-              [(ngModel)]="profileBuffer().education!.degree"
-              placeholder="Ej: Tecnicatura en Programación"
+              [(ngModel)]="profileBuffer().avatarUrl"
+              placeholder="https://url-de-tu-foto.jpg"
+            />
+            <p class="hint small">Leave empty for FA (Facundo) avatar</p>
+          </div>
+          <div class="input-row">
+            <div class="field">
+              <label>Location</label>
+              <input [(ngModel)]="profileBuffer().location" placeholder="Ciudad, País" />
+            </div>
+            <div class="field">
+              <label>Timezone</label>
+              <input [(ngModel)]="profileBuffer().timezone" placeholder="Ej: GMT-3" />
+            </div>
+          </div>
+          <label>Availability</label>
+          <input [(ngModel)]="profileBuffer().availability" placeholder="Ej: Remote / Full-time" />
+          <label>Professional Status (Badge)</label>
+          <input [(ngModel)]="profileBuffer().status" placeholder="Ej: Open to Work" />
+        </div>
+
+        <div class="modal-section background-details">
+          <h4><span class="ln">#</span> Professional Background</h4>
+
+          <div class="field-stack">
+            <label>Main Education (University)</label>
+            <div class="education-grid">
+              <input
+                [(ngModel)]="profileBuffer().education!.degree"
+                placeholder="Degree (Ej: Tecnicatura en Programación)"
+              />
+              <input
+                [(ngModel)]="profileBuffer().education!.university"
+                placeholder="University (Ej: UTN)"
+              />
+            </div>
+          </div>
+
+          <div class="field-stack">
+            <label>Additional Certifications & Courses (One per line)</label>
+            <textarea
+              [ngModel]="
+                profileBuffer().certifications?.join(
+                  '
+'
+                )
+              "
+              (ngModelChange)="updateCertifications($event)"
+              placeholder="Google UX Design Certificate&#10;Fullstack BootCamp..."
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div class="field-stack">
+            <label>Languages (Format: Name:Level, one per line)</label>
+            <textarea
+              [ngModel]="formatLanguages(profileBuffer().languages)"
+              (ngModelChange)="updateLanguages($event)"
+              placeholder="Spanish: Native&#10;English: B2"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div class="field-stack">
+            <label>Soft Skills (Comma separated)</label>
+            <input
+              [ngModel]="profileBuffer().softSkills?.join(', ')"
+              (ngModelChange)="updateSoftSkills($event)"
+              placeholder="Autogestión, Comunicación, Liderazgo..."
             />
           </div>
-          <div>
-            <label>University</label>
-            <input [(ngModel)]="profileBuffer().education!.university" placeholder="Ej: UTN" />
+
+          <div class="field-stack">
+            <label>Bio (About you)</label>
+            <textarea
+              [(ngModel)]="profileBuffer().bio"
+              placeholder="Cuéntanos un poco sobre ti y tu trayectoria..."
+              rows="6"
+            ></textarea>
           </div>
         </div>
 
-        <div class="education-grid">
-          <div>
-            <label>Timezone</label>
-            <input [(ngModel)]="profileBuffer().timezone" placeholder="Ej: GMT-3" />
-          </div>
-          <div>
-            <label>Availability</label>
-            <input
-              [(ngModel)]="profileBuffer().availability"
-              placeholder="Ej: Remote / Full-time"
-            />
-          </div>
-        </div>
-
-        <label>Location</label>
-        <input [(ngModel)]="profileBuffer().location" placeholder="Ciudad, País" />
-
-        <label>Languages (Format: Name:Level, one per line)</label>
-        <textarea
-          [ngModel]="formatLanguages(profileBuffer().languages)"
-          (ngModelChange)="updateLanguages($event)"
-          placeholder="Spanish: Native&#10;English: B2"
-        ></textarea>
-
-        <label>Soft Skills (Comma separated)</label>
-        <input
-          [ngModel]="profileBuffer().softSkills?.join(', ')"
-          (ngModelChange)="updateSoftSkills($event)"
-          placeholder="Autogestión, Comunicación..."
-        />
-
-        <label>Bio</label>
-        <textarea
-          [(ngModel)]="profileBuffer().bio"
-          placeholder="Breve biografía profesional"
-        ></textarea>
-
-        <div class="socials-grid">
-          <div>
-            <label>GitHub</label>
-            <input
-              [(ngModel)]="profileBuffer().socials.github"
-              placeholder="https://github.com/..."
-            />
-          </div>
-          <div>
-            <label>LinkedIn</label>
-            <input
-              [(ngModel)]="profileBuffer().socials.linkedin"
-              placeholder="https://linkedin.com/in/..."
-            />
-          </div>
-          <div>
-            <label>Twitter</label>
-            <input
-              [(ngModel)]="profileBuffer().socials.twitter"
-              placeholder="https://twitter.com/..."
-            />
-          </div>
-          <div>
-            <label>Email</label>
-            <input [(ngModel)]="profileBuffer().socials.email" placeholder="email@ejemplo.com" />
+        <div class="modal-section social-links">
+          <h4><span class="ln">#</span> Social Connect</h4>
+          <div class="socials-grid">
+            <div class="field">
+              <label>LinkedIn</label>
+              <input [(ngModel)]="profileBuffer().socials.linkedin" placeholder="LinkedIn URL" />
+            </div>
+            <div class="field">
+              <label>GitHub</label>
+              <input [(ngModel)]="profileBuffer().socials.github" placeholder="GitHub URL" />
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input [(ngModel)]="profileBuffer().socials.email" placeholder="email@ejemplo.com" />
+            </div>
+            <div class="field">
+              <label>Twitter/X</label>
+              <input [(ngModel)]="profileBuffer().socials.twitter" placeholder="Twitter URL" />
+            </div>
           </div>
         </div>
 
-        <button class="primary-btn" (click)="saveProfile(profileBuffer())">
-          {{ p ? 'Actualizar Perfil' : 'Crear Perfil' }}
+        <button class="primary-btn save-btn" (click)="saveProfile(profileBuffer())">
+          {{ p ? 'Save Changes' : 'Initialize Profile' }}
         </button>
       </div>
       }
@@ -451,7 +473,84 @@ import { Profile } from '../core/models/portfolio.model';
       .education-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
+        gap: 12px;
+      }
+
+      .modal-section {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        h4 {
+          margin: 0 0 5px 0;
+          font-size: 13px;
+          color: #007acc;
+          text-transform: uppercase;
+          letter-spacing: 1.5px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+
+          .ln {
+            color: rgba(255, 255, 255, 0.15);
+            font-family: var(--font-mono);
+          }
+        }
+      }
+
+      .field-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .input-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+
+      .hint.small {
+        font-size: 10px;
+        color: #666;
+        margin-top: 4px;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .modal-scrollable {
+        max-height: 75vh;
+        overflow-y: auto;
+        padding-right: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+
+        &::-webkit-scrollbar {
+          width: 5px;
+        }
+        &::-webkit-scrollbar-thumb {
+          background: rgba(0, 122, 204, 0.4);
+          border-radius: 10px;
+        }
+      }
+
+      .save-btn {
+        margin-top: 20px;
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        box-shadow: 0 -15px 30px rgba(0, 0, 0, 0.8);
       }
     `,
   ],
@@ -480,6 +579,8 @@ export class ModalContainerComponent {
       degree: '',
       university: '',
     },
+    avatarUrl: '',
+    certifications: [],
     languages: [],
     softSkills: [],
     socials: {
@@ -501,7 +602,15 @@ export class ModalContainerComponent {
     effect(() => {
       const p = this.state.profile();
       if (p) {
-        this.profileBuffer.set({ ...p });
+        // Asegurar que education y socials siempre tengan objetos base para el binding
+        const safeProfile: Profile = {
+          ...p,
+          education: p.education || { degree: '', university: '' },
+          socials: p.socials || { github: '', linkedin: '', twitter: '', email: '' },
+          languages: p.languages || [],
+          softSkills: p.softSkills || [],
+        };
+        this.profileBuffer.set(safeProfile);
       }
 
       const c = this.state.contact();
@@ -675,6 +784,17 @@ export class ModalContainerComponent {
     this.profileBuffer.update((p) => ({
       ...p,
       softSkills: skills,
+    }));
+  }
+
+  updateCertifications(value: string) {
+    const certs = value
+      .split('\n')
+      .map((c) => c.trim())
+      .filter((c) => !!c);
+    this.profileBuffer.update((p) => ({
+      ...p,
+      certifications: certs,
     }));
   }
 }
