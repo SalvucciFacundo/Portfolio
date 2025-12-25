@@ -449,7 +449,6 @@ import { ToastService } from '../core/services/toast.service';
 
         i {
           font-size: 14px;
-          color: #58a6ff;
         }
 
         button {
@@ -1093,27 +1092,28 @@ export class ModalContainerComponent {
 
   getIconClass(name: string): string {
     const n = name.toLowerCase();
-    if (n.includes('angular')) return 'devicon-angularjs-plain';
-    if (n.includes('react')) return 'devicon-react-original';
-    if (n.includes('typescript')) return 'devicon-typescript-plain';
-    if (n.includes('javascript')) return 'devicon-javascript-plain';
-    if (n.includes('firebase')) return 'devicon-firebase-plain';
-    if (n.includes('node')) return 'devicon-nodejs-plain';
-    if (n.includes('css')) return 'devicon-css3-plain';
-    if (n.includes('html')) return 'devicon-html5-plain';
-    if (n.includes('sass') || n.includes('scss')) return 'devicon-sass-original';
-    if (n.includes('git')) return 'devicon-git-plain';
-    if (n.includes('docker')) return 'devicon-docker-plain';
-    if (n.includes('python')) return 'devicon-python-plain';
-    if (n.includes('java') && !n.includes('script')) return 'devicon-java-plain';
-    if (n.includes('c#')) return 'devicon-csharp-plain';
-    if (n.includes('linux')) return 'devicon-linux-plain';
-    if (n.includes('tailwind')) return 'devicon-tailwindcss-original';
-    if (n.includes('figma')) return 'devicon-figma-plain';
-    if (n.includes('photoshop')) return 'devicon-photoshop-plain';
-    if (n.includes('mongo')) return 'devicon-mongodb-plain';
-    if (n.includes('sql')) return 'devicon-sqlite-plain';
-    if (n.includes('unity')) return 'devicon-unity-original';
-    return 'devicon-code-plain';
+    const base = 'colored ';
+    if (n.includes('angular')) return base + 'devicon-angularjs-plain';
+    if (n.includes('react')) return base + 'devicon-react-original';
+    if (n.includes('typescript')) return base + 'devicon-typescript-plain';
+    if (n.includes('javascript')) return base + 'devicon-javascript-plain';
+    if (n.includes('firebase')) return base + 'devicon-firebase-plain';
+    if (n.includes('node')) return base + 'devicon-nodejs-plain';
+    if (n.includes('css')) return base + 'devicon-css3-plain';
+    if (n.includes('html')) return base + 'devicon-html5-plain';
+    if (n.includes('sass') || n.includes('scss')) return base + 'devicon-sass-original';
+    if (n.includes('git')) return base + 'devicon-git-plain';
+    if (n.includes('docker')) return base + 'devicon-docker-plain';
+    if (n.includes('python')) return base + 'devicon-python-plain';
+    if (n.includes('java') && !n.includes('script')) return base + 'devicon-java-plain';
+    if (n.includes('c#')) return base + 'devicon-csharp-plain';
+    if (n.includes('linux')) return base + 'devicon-linux-plain';
+    if (n.includes('tailwind')) return base + 'devicon-tailwindcss-original';
+    if (n.includes('figma')) return base + 'devicon-figma-plain';
+    if (n.includes('photoshop')) return base + 'devicon-photoshop-plain';
+    if (n.includes('mongo')) return base + 'devicon-mongodb-plain';
+    if (n.includes('sql')) return base + 'devicon-sqlite-plain';
+    if (n.includes('unity')) return base + 'devicon-unity-original';
+    return base + 'devicon-code-plain';
   }
 }
