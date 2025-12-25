@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
-import { DataService } from '../../core/data/data.service';
+import { PortfolioStateService } from '../../core/services/portfolio-state.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -7,65 +7,93 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     <div class="code-container">
-      @if (aboutData$ | async; as data) {
+      @if (state.profile(); as p) {
+      <div class="line"><span class="ln">1</span><span class="comment">/**</span></div>
       <div class="line">
-        <span class="ln">1</span><span class="comment">// Perfil del Desarrollador</span>
+        <span class="ln">2</span><span class="comment"> * @system identity_module</span>
       </div>
       <div class="line">
-        <span class="ln">2</span><span class="keyword">export class</span>
-        <span class="type">AboutComponent</span> &#123;
+        <span class="ln">3</span><span class="comment"> * @operator {{ p.name }}</span>
+      </div>
+      <div class="line"><span class="ln">4</span><span class="comment"> */</span></div>
+      <div class="line"><span class="ln">5</span></div>
+      <div class="line">
+        <span class="ln">6</span><span class="keyword">export interface</span>
+        <span class="type">SystemOperator</span> &#123;
       </div>
       <div class="line">
-        <span class="ln">3</span>&nbsp;&nbsp;<span class="keyword">public</span>
-        <span class="prop">name</span> = <span class="string">'{{ data.name }}'</span>;
+        <span class="ln">7</span>&nbsp;&nbsp;<span class="prop">fullName</span>:
+        <span class="type">string</span>;
       </div>
       <div class="line">
-        <span class="ln">4</span>&nbsp;&nbsp;<span class="keyword">public</span>
-        <span class="prop">role</span> = <span class="string">'{{ data.role }}'</span>;
+        <span class="ln">8</span>&nbsp;&nbsp;<span class="prop">role</span>:
+        <span class="type">string</span>;
       </div>
       <div class="line">
-        <span class="ln">5</span>&nbsp;&nbsp;<span class="keyword">public</span>
-        <span class="prop">status</span> =
-        <span class="string">'{{ data.status || 'Open to Work' }}'</span>;
+        <span class="ln">9</span>&nbsp;&nbsp;<span class="prop">location</span>:
+        <span class="type">string</span>;
       </div>
       <div class="line">
-        <span class="ln">6</span>&nbsp;&nbsp;<span class="keyword">public</span>
-        <span class="prop">education</span> = &#123;
+        <span class="ln">10</span>&nbsp;&nbsp;<span class="prop">status</span>:
+        <span class="string">'OPEN_TO_WORK'</span> | <span class="string">'BUSY'</span>;
       </div>
       <div class="line">
-        <span class="ln">7</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="prop">degree</span>:
-        <span class="string">'{{ data.education?.degree || 'Tecnicatura en Programación' }}'</span>,
+        <span class="ln">11</span>&nbsp;&nbsp;<span class="prop">stack</span>:
+        <span class="type">string</span>[];
       </div>
       <div class="line">
-        <span class="ln">8</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="prop">university</span>:
-        <span class="string">'{{ data.education?.university || 'UTN' }}'</span>
+        <span class="ln">12</span>&nbsp;&nbsp;<span class="prop">availability</span>:
+        <span class="type">string</span>;
       </div>
-      <div class="line"><span class="ln">9</span>&nbsp;&nbsp;&#125;;</div>
+      <div class="line"><span class="ln">13</span>&#125;</div>
+      <div class="line"><span class="ln">14</span></div>
       <div class="line">
-        <span class="ln">10</span>&nbsp;&nbsp;<span class="keyword">public</span>
-        <span class="prop">summary</span> = <span class="string">\`</span>
-      </div>
-      <div class="line">
-        <span class="ln">11</span><span class="string">&nbsp;&nbsp;&nbsp;&nbsp;{{ data.bio }}</span>
-      </div>
-      <div class="line"><span class="ln">12</span>&nbsp;&nbsp;<span class="string">\`</span>;</div>
-      <div class="line">
-        <span class="ln">13</span>
+        <span class="ln">15</span><span class="keyword">const</span>
+        <span class="const">OPERATOR_DATA</span>: <span class="type">SystemOperator</span> = &#123;
       </div>
       <div class="line">
-        <span class="ln">14</span>&nbsp;&nbsp;<span class="keyword">constructor</span>() &#123;
+        <span class="ln">16</span>&nbsp;&nbsp;<span class="prop">fullName</span>:
+        <span class="string">'{{ p.name }}'</span>,
       </div>
       <div class="line">
-        <span class="ln">15</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="type">console</span>.<span
-          class="prop"
-          >log</span
-        >(<span class="string">'Cargando perfil de éxito...'</span>);
+        <span class="ln">17</span>&nbsp;&nbsp;<span class="prop">role</span>:
+        <span class="string">'{{ p.role }}'</span>,
       </div>
-      <div class="line"><span class="ln">16</span>&nbsp;&nbsp;&#125;</div>
-      <div class="line"><span class="ln">17</span>&#125;</div>
+      <div class="line">
+        <span class="ln">18</span>&nbsp;&nbsp;<span class="prop">location</span>:
+        <span class="string">'{{ p.location }} ({{ p.timezone }})'</span>,
+      </div>
+      <div class="line">
+        <span class="ln">19</span>&nbsp;&nbsp;<span class="prop">status</span>:
+        <span class="string">'{{ p.status === 'Open to Work' ? 'OPEN_TO_WORK' : 'BUSY' }}'</span>,
+      </div>
+      <div class="line">
+        <span class="ln">20</span>&nbsp;&nbsp;<span class="prop">stack</span>: [<span class="string"
+          >'Angular'</span
+        >, <span class="string">'TypeScript'</span>, <span class="string">'Firebase'</span>,
+        <span class="string">'RxJS'</span>],
+      </div>
+      <div class="line">
+        <span class="ln">21</span>&nbsp;&nbsp;<span class="prop">availability</span>:
+        <span class="string">'{{ p.availability }}'</span>
+      </div>
+      <div class="line"><span class="ln">22</span>&#125;;</div>
+      <div class="line"><span class="ln">23</span></div>
+      <div class="line">
+        <span class="ln">24</span><span class="comment">// Professional Brief</span>
+      </div>
+      <div class="line">
+        <span class="ln">25</span><span class="keyword">const</span> <span class="prop">bio</span> =
+        <span class="string">&#96;</span>
+      </div>
+      <div class="line">
+        <span class="ln">26</span><span class="string">&nbsp;&nbsp;{{ p.bio }}</span>
+      </div>
+      <div class="line"><span class="ln">27</span><span class="string">&#96;</span>;</div>
       } @else {
       <div class="line">
-        <span class="ln">1</span><span class="keyword">// Cargando perfil de Firebase...</span>
+        <span class="ln">1</span
+        ><span class="comment">// Fetching operator data from secure cloud...</span>
       </div>
       }
     </div>
@@ -73,22 +101,24 @@ import { CommonModule } from '@angular/common';
   styles: [
     `
       .code-container {
-        font-family: var(--font-mono);
-        font-size: 16px;
-        line-height: 1.5;
+        font-family: 'Fira Code', 'JetBrains Mono', monospace;
+        font-size: 14px;
+        line-height: 1.6;
+        padding: 20px;
       }
       .line {
         display: flex;
+        white-space: pre;
       }
       .ln {
-        width: 40px;
-        color: rgba(255, 255, 255, 0.2);
+        width: 30px;
+        color: rgba(255, 255, 255, 0.15);
         text-align: right;
-        padding-right: 20px;
+        padding-right: 15px;
         user-select: none;
       }
       .keyword {
-        color: #c586c0;
+        color: #c586bf;
       }
       .comment {
         color: #6a9955;
@@ -100,6 +130,10 @@ import { CommonModule } from '@angular/common';
       .prop {
         color: #9cdcfe;
       }
+      .const {
+        color: #4fc1ff;
+        font-weight: bold;
+      }
       .string {
         color: #ce9178;
       }
@@ -109,8 +143,5 @@ import { CommonModule } from '@angular/common';
   standalone: true,
 })
 export class AboutComponent {
-  private dataService = inject(DataService);
-
-  // We'll assume a document named 'profile' in 'about' collection
-  aboutData$ = this.dataService.getDoc<any>('about', 'profile');
+  protected state = inject(PortfolioStateService);
 }

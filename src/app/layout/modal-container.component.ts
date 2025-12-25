@@ -67,11 +67,36 @@ import { Profile } from '../core/models/portfolio.model';
           </div>
         </div>
 
-        <label>Motto</label>
-        <input [(ngModel)]="profileBuffer().motto" placeholder="Tu Lema" />
+        <div class="education-grid">
+          <div>
+            <label>Timezone</label>
+            <input [(ngModel)]="profileBuffer().timezone" placeholder="Ej: GMT-3" />
+          </div>
+          <div>
+            <label>Availability</label>
+            <input
+              [(ngModel)]="profileBuffer().availability"
+              placeholder="Ej: Remote / Full-time"
+            />
+          </div>
+        </div>
 
         <label>Location</label>
         <input [(ngModel)]="profileBuffer().location" placeholder="Ciudad, País" />
+
+        <label>Languages (Format: Name:Level, one per line)</label>
+        <textarea
+          [ngModel]="formatLanguages(profileBuffer().languages)"
+          (ngModelChange)="updateLanguages($event)"
+          placeholder="Spanish: Native&#10;English: B2"
+        ></textarea>
+
+        <label>Soft Skills (Comma separated)</label>
+        <input
+          [ngModel]="profileBuffer().softSkills?.join(', ')"
+          (ngModelChange)="updateSoftSkills($event)"
+          placeholder="Autogestión, Comunicación..."
+        />
 
         <label>Bio</label>
         <textarea
@@ -447,13 +472,16 @@ export class ModalContainerComponent {
     name: '',
     role: '',
     status: 'Open to Work',
-    motto: '',
     location: '',
+    timezone: 'GMT-3',
+    availability: 'Remote / Full-time',
     bio: '',
     education: {
       degree: '',
       university: '',
     },
+    languages: [],
+    softSkills: [],
     socials: {
       github: '',
       linkedin: '',
@@ -621,5 +649,32 @@ export class ModalContainerComponent {
     } catch (e) {
       this.terminal.log(`> [ERROR] Error al crear categoría`, 'error');
     }
+  }
+
+  formatLanguages(langs?: { name: string; level: string }[]): string {
+    if (!langs) return '';
+    return langs.map((l) => `${l.name}:${l.level}`).join('\n');
+  }
+
+  updateLanguages(value: string) {
+    const lines = value.split('\n').filter((l) => l.includes(':'));
+    this.profileBuffer.update((p) => ({
+      ...p,
+      languages: lines.map((line) => {
+        const [name, level] = line.split(':');
+        return { name: name.trim(), level: level.trim() };
+      }),
+    }));
+  }
+
+  updateSoftSkills(value: string) {
+    const skills = value
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => !!s);
+    this.profileBuffer.update((p) => ({
+      ...p,
+      softSkills: skills,
+    }));
   }
 }

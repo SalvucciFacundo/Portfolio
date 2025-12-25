@@ -26,7 +26,6 @@ import { FormsModule } from '@angular/forms';
             <input [(ngModel)]="profile.name" placeholder="Nombre" />
             <input [(ngModel)]="profile.role" placeholder="Rol" />
             <input [(ngModel)]="profile.location" placeholder="Ubicación" />
-            <input [(ngModel)]="profile.motto" placeholder="Lema/Motto" />
             <button class="save-btn" (click)="saveProfile(profile)">Guardar Perfil</button>
           </div>
           }

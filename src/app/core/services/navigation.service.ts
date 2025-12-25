@@ -17,6 +17,7 @@ export class NavigationService {
   isSidebarVisible = signal(typeof window !== 'undefined' ? window.innerWidth > 992 : true);
   viewMode = signal<'code' | 'preview'>('preview');
   scrollToRequest = signal<string | null>(null);
+  isNavigating = signal(false);
 
   getFileIcon(type: string, fileName?: string): string {
     const base = 'assets/material-icons';
@@ -191,8 +192,12 @@ export class NavigationService {
     // Activa el archivo correspondiente a la sección
     const primaryFile = this.allFiles().find((f) => f.path === section);
     if (primaryFile) {
+      this.isNavigating.set(true);
       this.activeFilePath.set(primaryFile.name);
       this.router.navigate([primaryFile.path]);
+
+      // Duration should match CSS transition
+      setTimeout(() => this.isNavigating.set(false), 800);
     }
   }
 

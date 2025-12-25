@@ -57,7 +57,7 @@ interface TerminalLine {
         width: 100%;
         height: 100%;
         background: transparent; /* Rely on browser-body gradient */
-        padding: 20px 40px;
+        padding: 40px;
         box-sizing: border-box;
       }
 

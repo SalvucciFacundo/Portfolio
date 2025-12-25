@@ -4,12 +4,15 @@ export interface Profile {
   role: string;
   status?: string;
   location: string;
-  motto: string;
+  timezone?: string; // e.g. GMT-3
+  availability?: string; // e.g. Remote / Full-time
   bio: string;
   education?: {
     degree: string;
     university: string;
   };
+  languages?: { name: string; level: string }[];
+  softSkills?: string[];
   avatarUrl?: string;
   socials: {
     github?: string;

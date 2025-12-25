@@ -292,29 +292,55 @@
                 </div>
               </nav>
             </header>
-            <main class="browser-body" (wheel)="handleWheel($event)">
+            <main
+              class="browser-body"
+              [class.is-navigating]="nav.isNavigating()"
+              (wheel)="handleWheel($event)"
+              [style.background-position]="'center ' + nav.getSectionIndex() * -15 + 'px'"
+            >
               <!-- Vertical Slider Container -->
               <div
                 class="preview-slider"
-                [style.transform]="'translateY(-' + nav.getSectionIndex() * 100 + '%)'"
+                [class.nav-transition]="nav.isNavigating()"
+                [style.--section-offset]="nav.getSectionIndex() * -100 + '%'"
               >
-                <div id="home-section" class="preview-section-wrapper">
+                <div
+                  id="home-section"
+                  class="preview-section-wrapper"
+                  [class.active]="nav.getSectionIndex() === 0"
+                >
                   <app-home-preview></app-home-preview>
                 </div>
 
-                <div id="about-section" class="preview-section-wrapper">
+                <div
+                  id="about-section"
+                  class="preview-section-wrapper"
+                  [class.active]="nav.getSectionIndex() === 1"
+                >
                   <app-about-preview></app-about-preview>
                 </div>
 
-                <div id="skills-section" class="preview-section-wrapper">
+                <div
+                  id="skills-section"
+                  class="preview-section-wrapper"
+                  [class.active]="nav.getSectionIndex() === 2"
+                >
                   <app-skills-preview></app-skills-preview>
                 </div>
 
-                <div id="projects-section" class="preview-section-wrapper">
+                <div
+                  id="projects-section"
+                  class="preview-section-wrapper"
+                  [class.active]="nav.getSectionIndex() === 3"
+                >
                   <app-projects-preview></app-projects-preview>
                 </div>
 
-                <div id="contact-section" class="preview-section-wrapper">
+                <div
+                  id="contact-section"
+                  class="preview-section-wrapper"
+                  [class.active]="nav.getSectionIndex() === 4"
+                >
                   <app-contact-preview></app-contact-preview>
                 </div>
               </div>
