@@ -313,8 +313,9 @@ export class SidebarComponent {
         angular: 'angular.svg',
         shell: 'console.svg',
         routing: 'routing.svg',
+        pdf: 'pdf.svg',
       };
-      icon = mapping[file.type] || 'file.svg';
+      icon = mapping[file.type] || (file.name.endsWith('.pdf') ? 'pdf.svg' : 'file.svg');
     }
 
     return { 'background-image': `url("${this.ICO_PATH}/${icon}")` };

@@ -110,6 +110,12 @@ export class NavigationService {
     const targetFile = this.allFiles().find((f) => f.name === fileName);
     if (!targetFile || targetFile.folder === 'root') return;
 
+    // Handle PDF download/view
+    if (fileName.endsWith('.pdf')) {
+      window.open(`assets/${fileName}`, '_blank');
+      return;
+    }
+
     this.allFiles.update((files) =>
       files.map((f) => {
         // Si el archivo que estamos abriendo pertenece a una sección (about, skills, etc)
