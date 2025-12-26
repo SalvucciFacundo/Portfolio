@@ -41,4 +41,7 @@ export interface Project {
   };
   featured: boolean;
   order: number;
+  role?: string;
+  host?: string;
+  exeName?: string;
 }

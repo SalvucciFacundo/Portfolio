@@ -27,6 +27,8 @@ export class NavigationService {
     if (fileName) {
       if (fileName.includes('.service.')) {
         icon = 'angular-service.clone.svg';
+      } else if (fileName.endsWith('.html')) {
+        icon = 'html.svg';
       } else if (fileName.includes('.component.')) {
         icon = 'angular-component.clone.svg';
       } else if (fileName === 'README.md') {

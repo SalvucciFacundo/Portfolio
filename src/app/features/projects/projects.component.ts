@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
-import { DataService } from '../../core/data/data.service';
+import { PortfolioStateService } from '../../core/services/portfolio-state.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,64 +8,130 @@ import { CommonModule } from '@angular/common';
   template: `
     <div class="code-container">
       <div class="line">
-        <span class="ln">1</span><span class="md-h1"># Mis Proyectos (Cloud)</span>
+        <span class="comment">&lt;!-- SYSTEM RECAP: Dynamic Portfolio Modules --&gt;</span>
       </div>
-      <div class="line"><span class="ln">2</span></div>
 
-      @if (projects$ | async; as projects) { @for (project of projects; track project.id; let i =
-      $index) {
       <div class="line">
-        <span class="ln">{{ 3 + i * 2 }}</span
-        ><span class="md-h2">## {{ i + 1 }}. {{ project.title }}</span>
+        <span class="tag">&lt;section</span> <span class="attr">class</span>=<span class="string"
+          >"workstation-grid"</span
+        ><span class="tag">&gt;</span>
       </div>
-      <div class="line">
-        <span class="ln">{{ 4 + i * 2 }}</span
-        >{{ project.description }}
+
+      @for (project of state.projects(); track project.id) {
+      <div class="line indent-1">
+        <span class="keyword">&#64;if</span> (project.featured) &lcub;
       </div>
-      <div class="line">
-        <span class="ln">{{ 5 + i * 2 }}</span>
+      <div class="line indent-2">
+        <span class="tag">&lt;article</span>
       </div>
-      } } @else {
-      <div class="line">
-        <span class="ln">3</span><span class="comment">// Cargando proyectos...</span>
+      <div class="line indent-3">
+        <span class="attr">class</span>=<span class="string">"project-card featured"</span>
       </div>
+      <div class="line indent-3">
+        <span class="attr">[id]</span>=<span class="string">"'{{ project.id }}'"</span
+        ><span class="tag">&gt;</span>
+      </div>
+
+      <div class="line indent-3">
+        <span class="tag">&lt;header&gt;</span>
+      </div>
+      <div class="line indent-4 breadcrumb">
+        <span class="tag">&lt;h2&gt;</span>{{ project.title }}<span class="tag">&lt;/h2&gt;</span>
+      </div>
+      <div class="line indent-4">
+        <span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="string"
+          >"exe-name"</span
+        ><span class="tag">&gt;</span>{{ project.exeName }}<span class="tag">&lt;/span&gt;</span>
+      </div>
+      <div class="line indent-3">
+        <span class="tag">&lt;/header&gt;</span>
+      </div>
+
+      <div class="line indent-3">
+        <span class="tag">&lt;p&gt;</span>{{ project.description
+        }}<span class="tag">&lt;/p&gt;</span>
+      </div>
+
+      <div class="line indent-2">
+        <span class="tag">&lt;/article&gt;</span>
+      </div>
+      <div class="line indent-1">&rcub; <span class="keyword">&#64;else</span> &lcub;</div>
+
+      <div class="line indent-2">
+        <span class="comment">&lt;!-- COMPACT MODE ACTIVATED --&gt;</span>
+      </div>
+      <div class="line indent-2">
+        <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="string"
+          >"compact-module"</span
+        ><span class="tag">&gt;</span>
+      </div>
+      <div class="line indent-3">
+        <span class="tag">&lt;h3&gt;</span>{{ project.title }}<span class="tag">&lt;/h3&gt;</span>
+      </div>
+      <div class="line indent-2">
+        <span class="tag">&lt;/div&gt;</span>
+      </div>
+
+      <div class="line indent-1">&rcub;</div>
       }
+
+      <div class="line">
+        <span class="tag">&lt;/section&gt;</span>
+      </div>
     </div>
   `,
   styles: [
     `
       .code-container {
         font-family: var(--font-mono);
-        font-size: 16px;
-        line-height: 1.5;
+        font-size: 14px;
+        line-height: 1.6;
+        padding: 20px;
+        color: #d4d4d4;
+        background: transparent;
       }
       .line {
         display: flex;
+        white-space: pre;
+        min-height: 1.6em;
       }
-      .ln {
-        width: 40px;
-        color: rgba(255, 255, 255, 0.2);
-        text-align: right;
-        padding-right: 20px;
-        user-select: none;
+      .indent-1 {
+        padding-left: 2ch;
       }
-      .md-h1 {
+      .indent-2 {
+        padding-left: 4ch;
+      }
+      .indent-3 {
+        padding-left: 6ch;
+      }
+      .indent-4 {
+        padding-left: 8ch;
+      }
+
+      /* Syntax Highlighting */
+      .tag {
         color: #569cd6;
-        font-weight: bold;
-      }
-      .md-h2 {
-        color: #4ec9b0;
-        font-weight: bold;
-      }
+      } /* Blue for tags */
+      .attr {
+        color: #9cdcfe;
+      } /* Light blue for attributes */
+      .string {
+        color: #ce9178;
+      } /* Orange for strings */
+      .keyword {
+        color: #c586c0;
+      } /* Purple for @if, @for */
       .comment {
         color: #6a9955;
+      } /* Green for comments */
+
+      .breadcrumb {
+        color: #4ec9b0; /* Teal for titles in code */
       }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class ProjectsComponent {
-  private dataService = inject(DataService);
-  projects$ = this.dataService.getCollection<any>('projects');
+  protected state = inject(PortfolioStateService);
 }

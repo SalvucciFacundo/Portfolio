@@ -7,7 +7,7 @@ import { TerminalService } from '../core/services/terminal.service';
 import { DataService } from '../core/data/data.service';
 import { AuthService } from '../core/auth/auth.service';
 import { ModalComponent } from '../shared/components/modal.component';
-import { Profile } from '../core/models/portfolio.model';
+import { Profile, Project } from '../core/models/portfolio.model';
 import { ToastService } from '../core/services/toast.service';
 
 @Component({
@@ -273,8 +273,15 @@ import { ToastService } from '../core/services/toast.service';
           @for (p of state.projects(); track p.id) {
           <div class="project-item-card complex">
             <div class="card-header">
-              <input class="title-input" [(ngModel)]="p.title" placeholder="Project Title" />
-              <button class="icon-danger-btn" (click)="deleteProject(p.id!)">
+              <div class="field-stack flex-grow">
+                <label>Project Technical Title</label>
+                <input class="title-input" [(ngModel)]="p.title" placeholder="Project Title" />
+              </div>
+              <div class="field-stack title-extra">
+                <label>EXE Name</label>
+                <input [(ngModel)]="p.exeName" placeholder="project_v1.exe" />
+              </div>
+              <button class="icon-danger-btn" (click)="deleteProject(p.id!)" title="Destroy Record">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path
                     d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
@@ -286,9 +293,34 @@ import { ToastService } from '../core/services/toast.service';
             <textarea [(ngModel)]="p.description" placeholder="Description"></textarea>
 
             <div class="input-grid">
-              <div>
-                <label>Image URL</label>
-                <input [(ngModel)]="p.imageUrl" placeholder="https://..." />
+              <div class="image-upload-zone">
+                <label>Project Screenshot</label>
+                <div class="upload-controls">
+                  @if (p.imageUrl) {
+                  <div class="project-preview-box">
+                    <img [src]="p.imageUrl" alt="Preview" />
+                  </div>
+                  } @else {
+                  <div class="project-preview-placeholder">NO_IMAGE_DATA</div>
+                  }
+                  <div class="upload-actions">
+                    <input
+                      #projectImgInput
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      (change)="handleProjectImageUpload($event, p)"
+                    />
+                    <button
+                      class="secondary-btn small-btn"
+                      (click)="projectImgInput.click()"
+                      [disabled]="uploadingProjects().get(p.id!)"
+                    >
+                      {{ uploadingProjects().get(p.id!) ? 'UPLOADING...' : 'UPLOAD NEW' }}
+                    </button>
+                    <input class="url-hint" [(ngModel)]="p.imageUrl" placeholder="Manual URL..." />
+                  </div>
+                </div>
               </div>
               <div>
                 <label>Tags (comma separated)</label>
@@ -311,6 +343,17 @@ import { ToastService } from '../core/services/toast.service';
               </div>
             </div>
 
+            <div class="input-grid">
+              <div>
+                <label>Operator Role</label>
+                <input [(ngModel)]="p.role" placeholder="Ej: Lead Developer" />
+              </div>
+              <div>
+                <label>Deployment Host</label>
+                <input [(ngModel)]="p.host" placeholder="Ej: Vercel, Firebase..." />
+              </div>
+            </div>
+
             <div class="footer-row">
               <label class="checkbox-label">
                 <input type="checkbox" [(ngModel)]="p.featured" /> Featured
@@ -329,19 +372,40 @@ import { ToastService } from '../core/services/toast.service';
 
       <!-- Edit Contact -->
       @if (type === 'edit-contact') {
-      <div class="form-group">
-        <label>Section Title</label>
-        <input [(ngModel)]="contactBuffer().title" placeholder="¡Hablemos!" />
+      <div class="form-group modal-scrollable">
+        <div class="modal-section">
+          <h4><span class="ln">#</span> Títulos y Textos</h4>
+          <label>Título de la Sección</label>
+          <input [(ngModel)]="contactBuffer().title" placeholder="¡Hablemos!" />
 
-        <label>Message</label>
-        <textarea
-          [(ngModel)]="contactBuffer().message"
-          placeholder="Si tienes una propuesta..."
-        ></textarea>
+          <label>Mensaje de Invitación</label>
+          <textarea
+            [(ngModel)]="contactBuffer().message"
+            placeholder="Si tienes una propuesta..."
+            rows="3"
+          ></textarea>
+        </div>
 
-        <p class="hint">// Social links are synced with your Profile</p>
+        <div class="modal-section social-links">
+          <h4><span class="ln">#</span> Redes y Correo</h4>
+          <p class="hint small">Esta información se sincroniza con tu perfil general.</p>
+          <div class="socials-grid">
+            <div class="field">
+              <label>LinkedIn</label>
+              <input [(ngModel)]="profileBuffer().socials.linkedin" placeholder="LinkedIn URL" />
+            </div>
+            <div class="field">
+              <label>GitHub</label>
+              <input [(ngModel)]="profileBuffer().socials.github" placeholder="GitHub URL" />
+            </div>
+            <div class="field">
+              <label>Email Directo</label>
+              <input [(ngModel)]="profileBuffer().socials.email" placeholder="email@ejemplo.com" />
+            </div>
+          </div>
+        </div>
 
-        <button class="primary-btn" (click)="saveContact()">Save Contact Text</button>
+        <button class="primary-btn save-btn" (click)="saveContact()">Guardar Cambios</button>
       </div>
       }
 
@@ -516,6 +580,16 @@ import { ToastService } from '../core/services/toast.service';
         justify-content: space-between;
         align-items: center;
         margin-bottom: 10px;
+      }
+
+      .title-extra {
+        width: 140px;
+        margin-right: 10px;
+        input {
+          font-family: var(--font-mono);
+          font-size: 11px;
+          color: #58a6ff;
+        }
       }
 
       .title-input {
@@ -783,6 +857,58 @@ import { ToastService } from '../core/services/toast.service';
         z-index: 10;
         box-shadow: 0 -15px 30px rgba(0, 0, 0, 0.8);
       }
+      .image-upload-zone {
+        grid-column: span 2;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px dashed rgba(255, 255, 255, 0.1);
+      }
+
+      .upload-controls {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        margin-top: 5px;
+      }
+
+      .project-preview-box,
+      .project-preview-placeholder {
+        width: 120px;
+        height: 70px;
+        border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
+        flex-shrink: 0;
+      }
+
+      .project-preview-placeholder {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.3);
+      }
+
+      .project-preview-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .upload-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex-grow: 1;
+      }
+
+      .url-hint {
+        font-size: 11px !important;
+        opacity: 0.6;
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -798,6 +924,7 @@ export class ModalContainerComponent {
   loginEmail = '';
   loginPass = '';
   isUploadingAvatar = signal(false);
+  uploadingProjects = signal<Map<string, boolean>>(new Map());
 
   // Local buffer for profile
   profileBuffer = signal<Profile>({
@@ -903,13 +1030,18 @@ export class ModalContainerComponent {
       return;
     }
     try {
+      // Guardar textos de contacto
       await this.dataService.save('about', 'contact', this.contactBuffer());
-      this.toast.show('Contacto actualizado', 'success');
-      this.terminal.log(`> [SYNC] Información de contacto actualizada`, 'success');
+
+      // También guardar los socials del perfil buffer si estamos en este modo
+      await this.dataService.save('about', 'profile', this.profileBuffer());
+
+      this.toast.show('Información de contacto actualizada', 'success');
+      this.terminal.log(`> [SYNC] Textos y redes sociales actualizadas`, 'success');
       this.modal.close();
     } catch (e: any) {
-      this.toast.show('Error al guardar contacto', 'error');
-      this.terminal.log(`> [ERROR] Error al guardar contacto: ${e.message || e}`, 'error');
+      this.toast.show('Error al guardar cambios', 'error');
+      this.terminal.log(`> [ERROR] Error al guardar contacto/redes: ${e.message || e}`, 'error');
     }
   }
 
@@ -1002,6 +1134,9 @@ export class ModalContainerComponent {
       links: { github: '', live: '' },
       order: 99,
       featured: false,
+      role: 'Fullstack Developer',
+      host: 'Vercel',
+      exeName: `project_${Date.now().toString().substring(0, 5)}.exe`,
     };
     const id = Date.now().toString();
     try {
@@ -1066,6 +1201,38 @@ export class ModalContainerComponent {
       ...p,
       certifications: certs,
     }));
+  }
+
+  async handleProjectImageUpload(event: Event, project: Project) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file || !project.id) return;
+
+    try {
+      this.uploadingProjects.update((map) => {
+        const newMap = new Map(map);
+        newMap.set(project.id!, true);
+        return newMap;
+      });
+
+      this.terminal.log(`Starting secure upload for project: ${project.title}...`, 'info');
+
+      const path = `projects/${project.id}/${file.name}`;
+      const url = await this.dataService.uploadFile(path, file);
+
+      project.imageUrl = url;
+      this.toast.show('Project image uploaded successfully', 'success');
+      this.terminal.log('Project asset synchronized with Storage.', 'success');
+    } catch (error) {
+      console.error('Project image upload error:', error);
+      this.toast.show('Failed to upload project image', 'error');
+      this.terminal.log('Project upload aborted due to network error.', 'error');
+    } finally {
+      this.uploadingProjects.update((map) => {
+        const newMap = new Map(map);
+        newMap.delete(project.id!);
+        return newMap;
+      });
+    }
   }
 
   async handleAvatarUpload(event: Event) {
